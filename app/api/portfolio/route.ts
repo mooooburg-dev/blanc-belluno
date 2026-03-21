@@ -5,8 +5,10 @@ import fs from "fs";
 import {
   getPortfolioItems,
   addPortfolioItem,
+  updatePortfolioItem,
   deletePortfolioItem,
   reorderPortfolioItems,
+  type Category,
 } from "@/lib/portfolio";
 
 export async function GET() {
@@ -27,6 +29,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
   }
 
+  const category = (formData.get("category") as Category) || "PARTY";
+  const title = (formData.get("title") as string) || "";
+  const tag = (formData.get("tag") as string) || "";
+
   const ext = path.extname(file.name) || ".jpg";
   const filename = `${uuidv4()}${ext}`;
   const uploadDir = path.join(process.cwd(), "public", "uploads");
@@ -43,10 +49,29 @@ export async function POST(request: NextRequest) {
     id: uuidv4(),
     filename,
     originalName: file.name,
+    category,
+    title,
+    tag,
     createdAt: new Date().toISOString(),
   });
 
   return NextResponse.json(item, { status: 201 });
+}
+
+export async function PATCH(request: NextRequest) {
+  const body = await request.json();
+  const { id, category, title, tag } = body;
+
+  if (!id) {
+    return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  }
+
+  const item = updatePortfolioItem(id, { category, title, tag });
+  if (!item) {
+    return NextResponse.json({ error: "Item not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(item);
 }
 
 export async function DELETE(request: NextRequest) {

@@ -1,4 +1,12 @@
-const INSTAGRAM_HANDLE = "blancbelluno";
+interface SiteSettings {
+  instagram: string;
+  kakaoChannel: string;
+  naverBlog: string;
+  phone: string;
+  email: string;
+  businessHours: string;
+  brandDescription: string;
+}
 
 const placeholderPosts = [
   { id: 1, gradient: "from-[#f8e8ee] to-[#f2ebe1]" },
@@ -9,7 +17,9 @@ const placeholderPosts = [
   { id: 6, gradient: "from-[#eedcd4] to-[#f8e8ee]" },
 ];
 
-export default function InstagramFeed() {
+export default function InstagramFeed({ settings }: { settings: SiteSettings }) {
+  const handle = settings.instagram || "blancbelluno";
+
   return (
     <section id="instagram" className="section-padding bg-blanc-surface">
       <div className="max-w-5xl mx-auto">
@@ -31,7 +41,7 @@ export default function InstagramFeed() {
         {/* Instagram handle badge */}
         <div className="flex justify-center mb-10">
           <a
-            href={`https://instagram.com/${INSTAGRAM_HANDLE}`}
+            href={`https://instagram.com/${handle}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 px-6 py-2.5 rounded-full border border-blanc-champagne hover:bg-blanc-blush-light transition-all duration-300 group"
@@ -41,7 +51,7 @@ export default function InstagramFeed() {
               size={16}
             />
             <span className="font-body text-xs tracking-[0.15em] text-blanc-text-primary uppercase">
-              @{INSTAGRAM_HANDLE}
+              @{handle}
             </span>
           </a>
         </div>
@@ -51,21 +61,17 @@ export default function InstagramFeed() {
           {placeholderPosts.map((post) => (
             <a
               key={post.id}
-              href={`https://instagram.com/${INSTAGRAM_HANDLE}`}
+              href={`https://instagram.com/${handle}`}
               target="_blank"
               rel="noopener noreferrer"
               className="group aspect-square relative overflow-hidden flex items-center justify-center"
             >
-              {/* Gradient background */}
               <div
                 className={`absolute inset-0 bg-gradient-to-br ${post.gradient} transition-transform duration-700 group-hover:scale-105`}
               />
-
               <span className="font-display text-[9px] tracking-[0.2em] text-blanc-text-muted/50 uppercase relative z-10">
                 Instagram Post
               </span>
-
-              {/* Hover overlay */}
               <div className="absolute inset-0 bg-blanc-text-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[1px]">
                 <InstagramIcon className="text-white drop-shadow-md" size={28} />
               </div>
@@ -76,7 +82,7 @@ export default function InstagramFeed() {
         {/* Follow CTA */}
         <div className="text-center mt-14">
           <a
-            href={`https://instagram.com/${INSTAGRAM_HANDLE}`}
+            href={`https://instagram.com/${handle}`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary inline-flex gap-3 px-10"

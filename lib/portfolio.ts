@@ -1,11 +1,23 @@
 import fs from "fs";
 import path from "path";
 
+export const CATEGORIES = [
+  "WEDDING",
+  "BABY SHOWER",
+  "PARTY",
+  "CORPORATE",
+] as const;
+
+export type Category = (typeof CATEGORIES)[number];
+
 export interface PortfolioItem {
   id: string;
   filename: string;
   originalName: string;
   order: number;
+  category: Category;
+  title: string;
+  tag: string;
   createdAt: string;
 }
 
@@ -37,11 +49,24 @@ export function addPortfolioItem(
   item: Omit<PortfolioItem, "order">
 ): PortfolioItem {
   const items = getPortfolioItems();
-  const maxOrder = items.length > 0 ? Math.max(...items.map((i) => i.order)) : -1;
+  const maxOrder =
+    items.length > 0 ? Math.max(...items.map((i) => i.order)) : -1;
   const newItem: PortfolioItem = { ...item, order: maxOrder + 1 };
   items.push(newItem);
   savePortfolioItems(items);
   return newItem;
+}
+
+export function updatePortfolioItem(
+  id: string,
+  updates: Partial<Pick<PortfolioItem, "category" | "title" | "tag">>
+): PortfolioItem | null {
+  const items = getPortfolioItems();
+  const item = items.find((i) => i.id === id);
+  if (!item) return null;
+  Object.assign(item, updates);
+  savePortfolioItems(items);
+  return item;
 }
 
 export function deletePortfolioItem(id: string): boolean {
@@ -50,13 +75,17 @@ export function deletePortfolioItem(id: string): boolean {
   if (index === -1) return false;
 
   const deleted = items[index];
-  const filePath = path.join(process.cwd(), "public", "uploads", deleted.filename);
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    "uploads",
+    deleted.filename
+  );
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath);
   }
 
   items.splice(index, 1);
-  // Re-order remaining items
   items.sort((a, b) => a.order - b.order).forEach((item, i) => {
     item.order = i;
   });

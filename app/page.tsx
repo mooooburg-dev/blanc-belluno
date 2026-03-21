@@ -5,19 +5,26 @@ import Gallery from "./components/Gallery";
 import InstagramFeed from "./components/InstagramFeed";
 import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
+import { getPortfolioItems } from "@/lib/portfolio";
+import { getSettings } from "@/lib/settings";
+
+export const dynamic = "force-dynamic";
 
 export default function Home() {
+  const portfolioItems = getPortfolioItems();
+  const settings = getSettings();
+
   return (
     <>
       <Header />
       <main>
         <Hero />
         <Services />
-        <Gallery />
-        <InstagramFeed />
-        <ContactForm />
+        <Gallery items={portfolioItems} />
+        <InstagramFeed settings={settings} />
+        <ContactForm settings={settings} />
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </>
   );
 }

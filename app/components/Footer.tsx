@@ -2,7 +2,17 @@
 
 import Link from "next/link";
 
-export default function Footer() {
+interface SiteSettings {
+  instagram: string;
+  kakaoChannel: string;
+  naverBlog: string;
+  phone: string;
+  email: string;
+  businessHours: string;
+  brandDescription: string;
+}
+
+export default function Footer({ settings }: { settings: SiteSettings }) {
   const currentYear = new Date().getFullYear();
 
   const scrollTo = (href: string) => {
@@ -24,24 +34,28 @@ export default function Footer() {
                 BELLUNO
               </p>
             </Link>
-            <p className="font-body text-sm font-light leading-loose text-blanc-champagne/60 mb-6 max-w-xs">
-              당신의 특별한 날을 더욱 빛나게.
-              <br />
-              섬세한 감각으로 빚어내는 프리미엄 파티 스타일링.
+            <p className="font-body text-sm font-light leading-loose text-blanc-champagne/60 mb-6 max-w-xs whitespace-pre-line">
+              {settings.brandDescription}
             </p>
             <div className="flex items-center gap-4">
-              <SocialLink
-                href="https://instagram.com/blancbelluno"
-                label="Instagram"
-              >
-                IG
-              </SocialLink>
-              <SocialLink href="https://pf.kakao.com" label="KakaoTalk">
-                KK
-              </SocialLink>
-              <SocialLink href="https://blog.naver.com" label="Naver Blog">
-                NB
-              </SocialLink>
+              {settings.instagram && (
+                <SocialLink
+                  href={`https://instagram.com/${settings.instagram}`}
+                  label="Instagram"
+                >
+                  IG
+                </SocialLink>
+              )}
+              {settings.kakaoChannel && (
+                <SocialLink href="https://pf.kakao.com" label="KakaoTalk">
+                  KK
+                </SocialLink>
+              )}
+              {settings.naverBlog && (
+                <SocialLink href={settings.naverBlog} label="Naver Blog">
+                  NB
+                </SocialLink>
+              )}
             </div>
           </div>
 
@@ -75,12 +89,27 @@ export default function Footer() {
               Inquiries
             </h4>
             <ul className="flex flex-col gap-5">
-              <FooterContactItem title="Instagram" value="@blancbelluno" />
-              <FooterContactItem title="Kakao" value="블랑벨루노" />
-              <FooterContactItem
-                title="Business Hours"
-                value="Mon-Fri, 10:00-18:00"
-              />
+              {settings.instagram && (
+                <FooterContactItem
+                  title="Instagram"
+                  value={`@${settings.instagram}`}
+                />
+              )}
+              {settings.kakaoChannel && (
+                <FooterContactItem
+                  title="Kakao"
+                  value={settings.kakaoChannel}
+                />
+              )}
+              {settings.phone && (
+                <FooterContactItem title="Phone" value={settings.phone} />
+              )}
+              {settings.businessHours && (
+                <FooterContactItem
+                  title="Business Hours"
+                  value={settings.businessHours}
+                />
+              )}
             </ul>
           </div>
         </div>

@@ -2,6 +2,16 @@
 
 import { useState } from "react";
 
+interface SiteSettings {
+  instagram: string;
+  kakaoChannel: string;
+  naverBlog: string;
+  phone: string;
+  email: string;
+  businessHours: string;
+  brandDescription: string;
+}
+
 const eventTypes = [
   "생일파티 (아이)",
   "생일파티 (어른)",
@@ -35,7 +45,7 @@ const initialForm: FormData = {
   message: "",
 };
 
-export default function ContactForm() {
+export default function ContactForm({ settings }: { settings: SiteSettings }) {
   const [form, setForm] = useState<FormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -130,23 +140,29 @@ export default function ContactForm() {
             </div>
 
             <div className="flex flex-col gap-6">
-              <ContactLink
-                title="KAKAO CHANNEL"
-                value="@blancbelluno"
-                href="https://pf.kakao.com"
-                desc="실시간 채팅 상담"
-              />
-              <ContactLink
-                title="INSTAGRAM"
-                value="@blancbelluno_official"
-                href="https://instagram.com/blancbelluno"
-                desc="다양한 레퍼런스 확인"
-              />
-              <ContactLink
-                title="HOURS"
-                value="Mon - Fri / 10:00 - 18:00"
-                desc="주말 및 공휴일 휴무"
-              />
+              {settings.kakaoChannel && (
+                <ContactLink
+                  title="KAKAO CHANNEL"
+                  value={settings.kakaoChannel}
+                  href="https://pf.kakao.com"
+                  desc="실시간 채팅 상담"
+                />
+              )}
+              {settings.instagram && (
+                <ContactLink
+                  title="INSTAGRAM"
+                  value={`@${settings.instagram}`}
+                  href={`https://instagram.com/${settings.instagram}`}
+                  desc="다양한 레퍼런스 확인"
+                />
+              )}
+              {settings.businessHours && (
+                <ContactLink
+                  title="HOURS"
+                  value={settings.businessHours}
+                  desc="주말 및 공휴일 휴무"
+                />
+              )}
             </div>
           </div>
 
