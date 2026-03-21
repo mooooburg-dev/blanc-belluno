@@ -8,9 +8,8 @@ const eventTypes = [
   "웨딩",
   "돌잔치",
   "베이비샤워",
-  "젠더 리빌",
-  "기업행사 / 팝업",
-  "홈파티",
+  "기업행사 / 브랜드 팝업",
+  "프라이빗 파티",
   "기타",
 ];
 
@@ -52,52 +51,38 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    // TODO: 실제 폼 제출 로직 구현
-    // 옵션 1: app/api/contact/route.ts 생성 후 이메일 발송 (nodemailer)
-    // 옵션 2: Formspree (https://formspree.io) 연동
-    // 옵션 3: 카카오 채널 API 연동
-    await new Promise((r) => setTimeout(r, 1200)); // 시뮬레이션
-
+    await new Promise((r) => setTimeout(r, 1200));
     setLoading(false);
     setSubmitted(true);
   };
 
   if (submitted) {
     return (
-      <section
-        id="contact"
-        className="section-padding"
-        style={{ background: "linear-gradient(160deg, #FFF0F5, #FFF8F0)" }}
-      >
-        <div className="max-w-xl mx-auto text-center py-16">
-          <div
-            className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
-            style={{
-              background: "linear-gradient(135deg, #F8E8EE, #EDD5E1)",
-              boxShadow: "0 4px 20px rgba(212, 137, 154, 0.2)",
-            }}
-          >
-            💌
+      <section id="contact" className="section-padding bg-blanc-base">
+        <div className="max-w-md mx-auto text-center py-16">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-blanc-surface border border-blanc-champagne relative overflow-hidden">
+            <div className="absolute inset-0 bg-blanc-blush opacity-20" />
+            <span className="font-display text-2xl italic text-blanc-gold">
+              B.
+            </span>
           </div>
-          <h3
-            className="font-display text-3xl font-light mb-3"
-            style={{ color: "#4A2D3E" }}
-          >
-            상담 신청이 완료됐어요!
+          <h3 className="font-display text-3xl md:text-4xl font-light text-blanc-text-primary mb-4 tracking-tight">
+            상담 신청이{" "}
+            <span className="italic text-blanc-text-secondary">
+              완료되었습니다
+            </span>
           </h3>
-          <p className="font-body text-base mb-2" style={{ color: "#7A5466" }}>
-            빠른 시일 내에 연락드리겠습니다.
+          <p className="font-body text-sm text-blanc-text-secondary font-light leading-relaxed mb-10">
+            소중한 문의를 남겨주셔서 감사합니다.
+            <br />
+            영업일 기준 1~2일 내에 꼼꼼히 확인 후 연락드리겠습니다.
           </p>
-          <p className="font-body text-sm" style={{ color: "#A8889A" }}>
-            보통 영업일 기준 1~2일 내 답변을 드립니다.
-          </p>
-          <div className="divider-gold mt-8 mb-8" />
+          <div className="divider-gold mb-10" />
           <button
             onClick={() => setSubmitted(false)}
-            className="btn-outline"
+            className="btn-outline px-10"
           >
-            다시 문의하기
+            새로운 문의하기
           </button>
         </div>
       </section>
@@ -107,196 +92,194 @@ export default function ContactForm() {
   return (
     <section
       id="contact"
-      className="section-padding"
-      style={{ background: "linear-gradient(160deg, #FFF0F5, #FFF8F0)" }}
+      className="section-padding relative overflow-hidden bg-blanc-base"
     >
-      <div className="max-w-5xl mx-auto">
+      {/* Subtle Background Elements */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/2 bg-linear-to-bl from-blanc-blush/40 to-transparent opacity-50 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/3 bg-linear-to-tr from-blanc-champagne/40 to-transparent opacity-50 pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-14">
-          <span
-            className="font-display text-sm tracking-[0.35em] uppercase block mb-3"
-            style={{ color: "#C9A96E" }}
-          >
-            Contact
+        <div className="text-center mb-14 md:mb-16">
+          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-5">
+            Inquiry
           </span>
-          <h2
-            className="font-display text-4xl md:text-5xl font-light mb-5"
-            style={{ color: "#4A2D3E" }}
-          >
-            상담 <span className="italic text-[#D4899A]">신청하기</span>
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary tracking-tight mb-6">
+            상담{" "}
+            <span className="italic text-blanc-text-secondary">신청하기</span>
           </h2>
           <div className="divider-gold" />
-          <p
-            className="font-body text-base mt-6 max-w-lg mx-auto leading-relaxed"
-            style={{ color: "#7A5466" }}
-          >
-            간단한 정보를 남겨주시면 맞춤 견적과 함께 연락드립니다. 어떤 행사든 환영해요 🎈
+          <p className="font-body text-sm md:text-base mt-8 max-w-lg mx-auto leading-relaxed text-blanc-text-secondary font-light">
+            특별한 날을 위한 완벽한 공간 연출,
+            <br className="hidden md:block" />
+            아래 폼을 통해 편하게 문의해 주세요.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-          {/* Left Info */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            <ContactInfoCard
-              emoji="💬"
-              title="카카오채널 문의"
-              desc="@blancbelluno 로 채팅 문의주시면 빠른 답변이 가능합니다."
-              link="https://pf.kakao.com"
-              linkLabel="카카오 채널 바로가기"
-            />
-            <ContactInfoCard
-              emoji="📸"
-              title="인스타그램 DM"
-              desc="인스타그램 DM으로도 문의 가능합니다. 사진 참고 자료를 함께 보내주시면 더 정확한 견적이 가능합니다."
-              link="https://instagram.com/blancbelluno"
-              linkLabel="@blancbelluno"
-            />
-            <ContactInfoCard
-              emoji="📞"
-              title="전화 문의"
-              desc="평일 10:00 – 18:00\n주말·공휴일은 DM 또는 폼을 이용해주세요."
-              link="tel:010-0000-0000"
-              linkLabel="010-0000-0000"
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          {/* Left Info Column */}
+          <div className="lg:col-span-4 flex flex-col gap-10">
+            <div>
+              <h3 className="font-display text-xl text-blanc-text-primary mb-4">
+                Contact Info
+              </h3>
+              <p className="font-body text-sm text-blanc-text-secondary font-light leading-relaxed">
+                급한 일정이시거나 빠른 확인이 필요하신 경우 카카오톡 채널을
+                이용해주시면 더욱 신속한 답변이 가능합니다.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-6">
+              <ContactLink
+                title="KAKAO CHANNEL"
+                value="@blancbelluno"
+                href="https://pf.kakao.com"
+                desc="실시간 채팅 상담"
+              />
+              <ContactLink
+                title="INSTAGRAM"
+                value="@blancbelluno_official"
+                href="https://instagram.com/blancbelluno"
+                desc="다양한 레퍼런스 확인"
+              />
+              <ContactLink
+                title="HOURS"
+                value="Mon - Fri / 10:00 - 18:00"
+                desc="주말 및 공휴일 휴무"
+              />
+            </div>
           </div>
 
-          {/* Right Form */}
-          <div
-            className="lg:col-span-3 rounded-3xl p-8 md:p-10"
-            style={{
-              background: "white",
-              boxShadow: "0 8px 40px rgba(74, 45, 62, 0.08)",
-              border: "1px solid rgba(237, 213, 225, 0.4)",
-            }}
-          >
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              {/* Row: 이름 + 연락처 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField label="이름 *" required>
+          {/* Right Form Column */}
+          <div className="lg:col-span-8">
+            <div className="bg-blanc-surface p-6 sm:p-8 md:p-10 border border-blanc-champagne/30 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.04)]">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField label="성함 (Name) *">
+                    <input
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      required
+                      className="input-belluno"
+                    />
+                  </FormField>
+                  <FormField label="연락처 (Phone) *">
+                    <input
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="010-0000-0000"
+                      required
+                      className="input-belluno"
+                    />
+                  </FormField>
+                </div>
+
+                <FormField label="이메일 (Email)">
                   <input
-                    name="name"
-                    value={form.name}
+                    name="email"
+                    type="email"
+                    value={form.email}
                     onChange={handleChange}
-                    placeholder="홍길동"
-                    required
                     className="input-belluno"
                   />
                 </FormField>
-                <FormField label="연락처 *" required>
-                  <input
-                    name="phone"
-                    value={form.phone}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField label="행사 종류 *">
+                    <div className="relative">
+                      <select
+                        name="eventType"
+                        value={form.eventType}
+                        onChange={handleChange}
+                        required
+                        className="input-belluno appearance-none"
+                      >
+                        <option value="" disabled className="text-blanc-text-muted">
+                          선택해주세요
+                        </option>
+                        {eventTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-blanc-gold text-[10px]">
+                        ▼
+                      </div>
+                    </div>
+                  </FormField>
+                  <FormField label="행사 일자 *">
+                    <input
+                      name="eventDate"
+                      type="date"
+                      value={form.eventDate}
+                      onChange={handleChange}
+                      required
+                      className="input-belluno"
+                    />
+                  </FormField>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField label="장소 (지역 및 베뉴)">
+                    <input
+                      name="location"
+                      value={form.location}
+                      onChange={handleChange}
+                      placeholder="ex) 서울 잠실 OOO호텔"
+                      className="input-belluno"
+                    />
+                  </FormField>
+                  <FormField label="예상 예산">
+                    <div className="relative">
+                      <select
+                        name="budget"
+                        value={form.budget}
+                        onChange={handleChange}
+                        className="input-belluno appearance-none"
+                      >
+                        <option value="" disabled className="text-blanc-text-muted">
+                          선택 (선택사항)
+                        </option>
+                        <option value="협의 가능">협의</option>
+                        <option value="30만원 내외">30만원 내외</option>
+                        <option value="50만원 내외">50만원 내외</option>
+                        <option value="100만원 이상">100만원 이상</option>
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-blanc-gold text-[10px]">
+                        ▼
+                      </div>
+                    </div>
+                  </FormField>
+                </div>
+
+                <FormField label="상세 내용">
+                  <textarea
+                    name="message"
+                    value={form.message}
                     onChange={handleChange}
-                    placeholder="010-0000-0000"
-                    required
-                    className="input-belluno"
+                    rows={4}
+                    placeholder="원하시는 분위기, 메인 컬러, 참고하신 시안 링크 등을 남겨주시면 더욱 정확한 상담이 가능합니다."
+                    className="input-belluno resize-none"
                   />
                 </FormField>
-              </div>
 
-              {/* 이메일 */}
-              <FormField label="이메일">
-                <input
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="example@email.com"
-                  className="input-belluno"
-                />
-              </FormField>
-
-              {/* Row: 행사 종류 + 예정일 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField label="행사 종류 *" required>
-                  <select
-                    name="eventType"
-                    value={form.eventType}
-                    onChange={handleChange}
-                    required
-                    className="input-belluno"
+                <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-blanc-champagne/40 mt-2">
+                  <p className="font-body text-[10px] uppercase tracking-widest text-blanc-text-muted">
+                    * 필수 입력 (Required)
+                  </p>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn-primary w-full sm:w-auto px-10 disabled:opacity-70"
                   >
-                    <option value="">선택해주세요</option>
-                    {eventTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </FormField>
-                <FormField label="행사 예정일 *" required>
-                  <input
-                    name="eventDate"
-                    type="date"
-                    value={form.eventDate}
-                    onChange={handleChange}
-                    required
-                    className="input-belluno"
-                  />
-                </FormField>
-              </div>
-
-              {/* Row: 장소 + 예산 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField label="행사 장소">
-                  <input
-                    name="location"
-                    value={form.location}
-                    onChange={handleChange}
-                    placeholder="예) 서울 강남구"
-                    className="input-belluno"
-                  />
-                </FormField>
-                <FormField label="예산 범위">
-                  <select
-                    name="budget"
-                    value={form.budget}
-                    onChange={handleChange}
-                    className="input-belluno"
-                  >
-                    <option value="">선택 (선택사항)</option>
-                    <option value="10만원 미만">10만원 미만</option>
-                    <option value="10~30만원">10~30만원</option>
-                    <option value="30~50만원">30~50만원</option>
-                    <option value="50~100만원">50~100만원</option>
-                    <option value="100만원 이상">100만원 이상</option>
-                    <option value="협의">협의 가능</option>
-                  </select>
-                </FormField>
-              </div>
-
-              {/* 메시지 */}
-              <FormField label="문의 내용">
-                <textarea
-                  name="message"
-                  value={form.message}
-                  onChange={handleChange}
-                  rows={4}
-                  placeholder="행사에 대해 자유롭게 말씀해주세요. 참고하고 싶은 스타일이나 컬러가 있다면 알려주세요 😊"
-                  className="input-belluno resize-none"
-                />
-              </FormField>
-
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-primary w-full mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    전송 중...
-                  </>
-                ) : (
-                  <>✦ 상담 신청하기</>
-                )}
-              </button>
-
-              <p className="font-body text-xs text-center" style={{ color: "#A8889A" }}>
-                * 표시 항목은 필수 입력 사항입니다.
-              </p>
-            </form>
+                    {loading ? "SUBMITTING..." : "SUBMIT INQUIRY"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -307,75 +290,57 @@ export default function ContactForm() {
 function FormField({
   label,
   children,
-  required,
 }: {
   label: string;
   children: React.ReactNode;
-  required?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label
-        className="font-body text-sm font-medium"
-        style={{ color: "#7A5466" }}
-      >
+    <div className="flex flex-col gap-2">
+      <label className="font-body text-[11px] tracking-[0.1em] text-blanc-text-secondary uppercase">
         {label}
-        {required && (
-          <span className="ml-0.5" style={{ color: "#D4899A" }}>
-            *
-          </span>
-        )}
       </label>
       {children}
     </div>
   );
 }
 
-function ContactInfoCard({
-  emoji,
+function ContactLink({
   title,
+  value,
   desc,
-  link,
-  linkLabel,
+  href,
 }: {
-  emoji: string;
   title: string;
+  value: string;
   desc: string;
-  link: string;
-  linkLabel: string;
+  href?: string;
 }) {
-  return (
-    <div
-      className="rounded-2xl p-6"
-      style={{
-        background: "white",
-        border: "1px solid rgba(237, 213, 225, 0.5)",
-        boxShadow: "0 2px 12px rgba(74, 45, 62, 0.05)",
-      }}
-    >
-      <div className="flex items-start gap-3 mb-2">
-        <span className="text-xl">{emoji}</span>
-        <div>
-          <p className="font-body font-medium text-sm" style={{ color: "#4A2D3E" }}>
-            {title}
-          </p>
-          <p
-            className="font-body text-sm mt-1 leading-relaxed whitespace-pre-line"
-            style={{ color: "#A8889A" }}
-          >
-            {desc}
-          </p>
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-body text-sm font-medium mt-2 inline-block hover:underline"
-            style={{ color: "#D4899A" }}
-          >
-            {linkLabel} →
-          </a>
-        </div>
-      </div>
+  const content = (
+    <div className="group border-l border-blanc-gold pl-5 py-1">
+      <p className="font-display text-[10px] tracking-[0.3em] text-blanc-text-muted uppercase mb-1">
+        {title}
+      </p>
+      <p className="font-body text-sm text-blanc-text-primary tracking-wide mb-1 transition-colors group-hover:text-blanc-text-secondary">
+        {value}
+      </p>
+      <p className="font-body text-[11px] text-blanc-text-muted font-light">
+        {desc}
+      </p>
     </div>
   );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block w-fit"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return content;
 }

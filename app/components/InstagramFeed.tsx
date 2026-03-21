@@ -1,56 +1,30 @@
-// Instagram Feed Section
-// 실제 연동 방법:
-// 옵션 1 (추천): Elfsight Instagram Feed 위젯 사용 (유료, 간편)
-//   → https://elfsight.com/instagram-feed-widget/
-// 옵션 2: Instagram Basic Display API + 서버사이드 캐싱
-//   → /api/instagram/route.ts 에서 fetchInstagramFeed() 구현
-// 옵션 3: react-instagram-embed 패키지 사용
-
-// 현재는 플레이스홀더 그리드로 구성되어 있습니다.
-// 실제 사진이 준비되면 아래 placeholderPosts 배열을 실제 API 응답으로 교체하세요.
-
-const INSTAGRAM_HANDLE = "blancbelluno"; // 실제 인스타그램 계정으로 변경
+const INSTAGRAM_HANDLE = "blancbelluno";
 
 const placeholderPosts = [
-  { id: 1, color: "#F8D7E3", accent: "#E8A0BF", emoji: "🎈" },
-  { id: 2, color: "#FFF0E0", accent: "#E8C49A", emoji: "🎀" },
-  { id: 3, color: "#E8F0FF", accent: "#A0B4E8", emoji: "🌸" },
-  { id: 4, color: "#F5E8FF", accent: "#C49AE8", emoji: "✨" },
-  { id: 5, color: "#FFE8F5", accent: "#E8A0CC", emoji: "🎊" },
-  { id: 6, color: "#FFEEE8", accent: "#E8C0A0", emoji: "💕" },
-  { id: 7, color: "#E8FFEE", accent: "#A0E8B4", emoji: "🎁" },
-  { id: 8, color: "#FFF5E8", accent: "#E8D0A0", emoji: "🌷" },
-  { id: 9, color: "#EEE8FF", accent: "#B4A0E8", emoji: "🦋" },
+  { id: 1, gradient: "from-[#f8e8ee] to-[#f2ebe1]" },
+  { id: 2, gradient: "from-[#f2ebe1] to-[#e8eef5]" },
+  { id: 3, gradient: "from-[#e8eef5] to-[#f5f0ea]" },
+  { id: 4, gradient: "from-[#f5f0ea] to-[#f0e2e8]" },
+  { id: 5, gradient: "from-[#f0e2e8] to-[#eedcd4]" },
+  { id: 6, gradient: "from-[#eedcd4] to-[#f8e8ee]" },
 ];
 
 export default function InstagramFeed() {
   return (
-    <section
-      id="instagram"
-      className="section-padding"
-      style={{ background: "#FFF8FD" }}
-    >
-      <div className="max-w-6xl mx-auto">
+    <section id="instagram" className="section-padding bg-blanc-surface">
+      <div className="max-w-5xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <span
-            className="font-display text-sm tracking-[0.35em] uppercase block mb-3"
-            style={{ color: "#C9A96E" }}
-          >
-            Instagram
+        <div className="text-center mb-12 md:mb-14">
+          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-5">
+            Follow Us
           </span>
-          <h2
-            className="font-display text-4xl md:text-5xl font-light mb-5"
-            style={{ color: "#4A2D3E" }}
-          >
-            인스타그램에서 <span className="italic text-[#D4899A]">만나요</span>
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary tracking-tight mb-6">
+            인스타그램에서{" "}
+            <span className="italic text-blanc-text-secondary">만나요</span>
           </h2>
           <div className="divider-gold" />
-          <p
-            className="font-body text-base mt-6"
-            style={{ color: "#7A5466" }}
-          >
-            매일 업데이트되는 블랑벨루노의 작업물을 팔로우하고 먼저 만나보세요.
+          <p className="font-body text-sm md:text-base mt-8 text-blanc-text-secondary font-light">
+            매일 업데이트되는 블랑벨루노의 작업물을 가장 먼저 확인하세요.
           </p>
         </div>
 
@@ -60,82 +34,69 @@ export default function InstagramFeed() {
             href={`https://instagram.com/${INSTAGRAM_HANDLE}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 px-6 py-3 rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-            style={{
-              background: "linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
-              color: "white",
-            }}
+            className="flex items-center gap-3 px-6 py-2.5 rounded-full border border-blanc-champagne hover:bg-blanc-blush-light transition-all duration-300 group"
           >
-            <InstagramIcon />
-            <span className="font-body font-medium tracking-wide text-sm">
+            <InstagramIcon
+              className="text-blanc-text-primary transition-transform group-hover:scale-110"
+              size={16}
+            />
+            <span className="font-body text-xs tracking-[0.15em] text-blanc-text-primary uppercase">
               @{INSTAGRAM_HANDLE}
             </span>
           </a>
         </div>
 
         {/* Feed Grid */}
-        <div className="grid grid-cols-3 gap-2 md:gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           {placeholderPosts.map((post) => (
             <a
               key={post.id}
               href={`https://instagram.com/${INSTAGRAM_HANDLE}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group aspect-square rounded-xl overflow-hidden relative cursor-pointer"
-              style={{
-                background: `linear-gradient(135deg, ${post.color}, ${post.accent}60)`,
-                border: "1px solid rgba(201, 160, 188, 0.15)",
-              }}
+              className="group aspect-square relative overflow-hidden flex items-center justify-center"
             >
-              {/* Placeholder content */}
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="text-4xl md:text-5xl opacity-30">{post.emoji}</span>
-              </div>
+              {/* Gradient background */}
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${post.gradient} transition-transform duration-700 group-hover:scale-105`}
+              />
+
+              <span className="font-display text-[9px] tracking-[0.2em] text-blanc-text-muted/50 uppercase relative z-10">
+                Instagram Post
+              </span>
 
               {/* Hover overlay */}
-              <div
-                className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
-                style={{ background: "rgba(74, 45, 62, 0.55)" }}
-              >
-                <InstagramIcon className="text-white opacity-90" size={28} />
+              <div className="absolute inset-0 bg-blanc-text-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[1px]">
+                <InstagramIcon className="text-white drop-shadow-md" size={28} />
               </div>
             </a>
           ))}
         </div>
 
         {/* Follow CTA */}
-        <div className="text-center mt-10">
+        <div className="text-center mt-14">
           <a
             href={`https://instagram.com/${INSTAGRAM_HANDLE}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-primary inline-flex"
+            className="btn-primary inline-flex gap-3 px-10"
           >
-            <InstagramIcon size={16} />
-            인스타그램 팔로우하기
+            <InstagramIcon size={14} />
+            FOLLOW ON INSTAGRAM
           </a>
-        </div>
-
-        {/* Integration Note (dev only - 실제 배포 시 제거) */}
-        <div
-          className="mt-10 p-5 rounded-2xl text-left"
-          style={{ background: "#FFF0F5", border: "1px dashed #EDD5E1" }}
-        >
-          <p className="font-body text-xs font-medium mb-2" style={{ color: "#C9A96E" }}>
-            💡 Instagram 실시간 피드 연동 방법
-          </p>
-          <p className="font-body text-xs leading-relaxed" style={{ color: "#A8889A" }}>
-            <strong style={{ color: "#7A5466" }}>옵션 1 (추천):</strong> <code>app/api/instagram/route.ts</code>에 Instagram Basic Display API 구현 후 이 컴포넌트에서 fetch<br />
-            <strong style={{ color: "#7A5466" }}>옵션 2:</strong> Elfsight 위젯 임베드 (무설정, 유료)<br />
-            <strong style={{ color: "#7A5466" }}>현재:</strong> 플레이스홀더 그리드 표시 중 — 실제 피드 연동 후 이 안내 박스는 삭제해주세요.
-          </p>
         </div>
       </div>
     </section>
   );
 }
 
-function InstagramIcon({ className = "", size = 20 }: { className?: string; size?: number }) {
+function InstagramIcon({
+  className = "",
+  size = 20,
+}: {
+  className?: string;
+  size?: number;
+}) {
   return (
     <svg
       width={size}

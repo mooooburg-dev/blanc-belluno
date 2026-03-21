@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const navLinks = [
-  { label: "홈", href: "#home" },
-  { label: "서비스", href: "#services" },
-  { label: "포트폴리오", href: "#gallery" },
-  { label: "인스타그램", href: "#instagram" },
-  { label: "문의", href: "#contact" },
+  { label: "Home", href: "#home" },
+  { label: "Services", href: "#services" },
+  { label: "Portfolio", href: "#gallery" },
+  { label: "Instagram", href: "#instagram" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export default function Header() {
@@ -21,6 +21,17 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
   const handleNavClick = (href: string) => {
     setMenuOpen(false);
     const el = document.querySelector(href);
@@ -29,27 +40,23 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
         scrolled
-          ? "bg-white/95 backdrop-blur-md shadow-sm"
-          : "bg-transparent"
+          ? "bg-white/85 backdrop-blur-xl border-blanc-champagne/40 shadow-sm py-2.5"
+          : "bg-transparent border-transparent py-4"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between h-18 md:h-20">
+      <div className="max-w-6xl mx-auto px-5 md:px-8 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="#home"
           onClick={() => handleNavClick("#home")}
-          className="flex flex-col items-start leading-none group"
+          className="flex flex-col items-center justify-center group"
         >
-          <span
-            className="font-display text-2xl md:text-3xl font-light tracking-[0.2em] text-[#4A2D3E] group-hover:text-[#D4899A] transition-colors"
-          >
+          <span className="font-display text-xl md:text-2xl font-light tracking-[0.15em] text-blanc-text-primary group-hover:text-blanc-text-secondary transition-colors leading-none">
             BLANC
           </span>
-          <span
-            className="font-display text-xs tracking-[0.35em] text-[#C9A96E] font-light mt-[-2px]"
-          >
+          <span className="font-display text-[8px] md:text-[9px] tracking-[0.4em] text-blanc-gold font-light mt-0.5">
             BELLUNO
           </span>
         </Link>
@@ -60,64 +67,66 @@ export default function Header() {
             <button
               key={link.label}
               onClick={() => handleNavClick(link.href)}
-              className="font-body text-sm tracking-widest text-[#7A5466] hover:text-[#D4899A] transition-colors duration-200 cursor-pointer uppercase"
+              className="font-body text-[11px] tracking-[0.12em] text-blanc-text-secondary hover:text-blanc-text-primary transition-colors cursor-pointer uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-blanc-gold after:origin-right after:scale-x-0 hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-300"
             >
               {link.label}
             </button>
           ))}
           <button
             onClick={() => handleNavClick("#contact")}
-            className="btn-primary text-sm px-5 py-2.5"
+            className="font-body text-[11px] tracking-[0.12em] text-white bg-blanc-text-primary hover:bg-black px-5 py-2 transition-colors uppercase"
           >
-            상담 신청
+            Inquire
           </button>
         </nav>
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden flex flex-col gap-1.5 p-2 cursor-pointer"
+          className="md:hidden flex flex-col justify-center items-center w-8 h-8 cursor-pointer relative z-50"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="메뉴 열기"
         >
           <span
-            className={`block w-6 h-0.5 bg-[#7A5466] transition-all duration-300 ${
-              menuOpen ? "rotate-45 translate-y-2" : ""
+            className={`block absolute w-5 h-px bg-blanc-text-primary transition-transform duration-300 ease-in-out ${
+              menuOpen ? "rotate-45" : "-translate-y-1.5"
             }`}
           />
           <span
-            className={`block w-6 h-0.5 bg-[#7A5466] transition-all duration-300 ${
-              menuOpen ? "opacity-0" : ""
+            className={`block absolute w-5 h-px bg-blanc-text-primary transition-opacity duration-300 ease-in-out ${
+              menuOpen ? "opacity-0" : "opacity-100"
             }`}
           />
           <span
-            className={`block w-6 h-0.5 bg-[#7A5466] transition-all duration-300 ${
-              menuOpen ? "-rotate-45 -translate-y-2" : ""
+            className={`block absolute w-5 h-px bg-blanc-text-primary transition-transform duration-300 ease-in-out ${
+              menuOpen ? "-rotate-45" : "translate-y-1.5"
             }`}
           />
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       <div
-        className={`md:hidden transition-all duration-300 overflow-hidden ${
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        className={`md:hidden fixed inset-0 top-0 bg-white/98 backdrop-blur-xl transition-all duration-400 ${
+          menuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
       >
-        <nav className="bg-white/98 backdrop-blur-md border-t border-[#EDD5E1] px-6 py-4 flex flex-col gap-1">
+        <nav className="flex flex-col items-center justify-center h-full gap-8">
           {navLinks.map((link) => (
             <button
               key={link.label}
               onClick={() => handleNavClick(link.href)}
-              className="font-body text-sm tracking-widest text-[#7A5466] hover:text-[#D4899A] transition-colors py-3 text-left uppercase border-b border-[#F8E8EE] last:border-0"
+              className="font-body text-sm tracking-[0.2em] text-blanc-text-secondary hover:text-blanc-text-primary transition-colors uppercase"
             >
               {link.label}
             </button>
           ))}
           <button
             onClick={() => handleNavClick("#contact")}
-            className="btn-primary mt-2 text-sm w-full"
+            className="mt-4 font-body text-xs tracking-[0.15em] text-white bg-blanc-text-primary px-8 py-3 uppercase"
           >
-            상담 신청
+            Inquire
           </button>
         </nav>
       </div>
