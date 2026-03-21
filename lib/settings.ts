@@ -35,9 +35,13 @@ function ensureSettingsFile() {
 }
 
 export function getSettings(): SiteSettings {
-  ensureSettingsFile();
-  const raw = fs.readFileSync(SETTINGS_PATH, "utf-8");
-  return { ...defaultSettings, ...JSON.parse(raw) };
+  try {
+    const raw = fs.readFileSync(SETTINGS_PATH, "utf-8");
+    return { ...defaultSettings, ...JSON.parse(raw) };
+  } catch {
+    // Vercel read-only 파일 시스템 또는 settings 파일 미존재 시 기본값 반환
+    return { ...defaultSettings };
+  }
 }
 
 export function updateSettings(

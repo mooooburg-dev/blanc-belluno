@@ -34,10 +34,14 @@ function ensureDataDir() {
 }
 
 export function getPortfolioItems(): PortfolioItem[] {
-  ensureDataDir();
-  const raw = fs.readFileSync(DATA_PATH, "utf-8");
-  const items: PortfolioItem[] = JSON.parse(raw);
-  return items.sort((a, b) => a.order - b.order);
+  try {
+    const raw = fs.readFileSync(DATA_PATH, "utf-8");
+    const items: PortfolioItem[] = JSON.parse(raw);
+    return items.sort((a, b) => a.order - b.order);
+  } catch {
+    // Vercel read-only 파일 시스템 또는 data 파일 미존재 시 빈 배열 반환
+    return [];
+  }
 }
 
 export function savePortfolioItems(items: PortfolioItem[]) {
