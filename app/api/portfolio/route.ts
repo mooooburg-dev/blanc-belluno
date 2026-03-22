@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import path from "path";
-import fs from "fs";
+import { supabase } from "@/lib/supabase";
 import {
   getPortfolioItems,
   addPortfolioItem,
@@ -12,11 +11,18 @@ import {
 } from "@/lib/portfolio";
 
 export async function GET() {
-  const items = getPortfolioItems();
+  const items = await getPortfolioItems();
   return NextResponse.json(items);
 }
 
 export async function POST(request: NextRequest) {
+  if (!supabase) {
+    return NextResponse.json(
+      { error: "Storage not configured" },
+      { status: 500 }
+    );
+  }
+
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
 
@@ -33,19 +39,25 @@ export async function POST(request: NextRequest) {
   const title = (formData.get("title") as string) || "";
   const tag = (formData.get("tag") as string) || "";
 
-  const ext = path.extname(file.name) || ".jpg";
-  const filename = `${uuidv4()}${ext}`;
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
+  const ext = file.name.split(".").pop() || "jpg";
+  const filename = `${uuidv4()}.${ext}`;
 
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  // Supabase Storage에 업로드
+  const bytes = await file.arrayBuffer();
+  const { error: uploadError } = await supabase.storage
+    .from("belluno-uploads")
+    .upload(filename, bytes, {
+      contentType: file.type,
+    });
+
+  if (uploadError) {
+    return NextResponse.json(
+      { error: "Upload failed: " + uploadError.message },
+      { status: 500 }
+    );
   }
 
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  fs.writeFileSync(path.join(uploadDir, filename), buffer);
-
-  const item = addPortfolioItem({
+  const item = await addPortfolioItem({
     id: uuidv4(),
     filename,
     originalName: file.name,
@@ -66,7 +78,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   }
 
-  const item = updatePortfolioItem(id, { category, title, tag });
+  const item = await updatePortfolioItem(id, { category, title, tag });
   if (!item) {
     return NextResponse.json({ error: "Item not found" }, { status: 404 });
   }
@@ -76,7 +88,7 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const { id } = await request.json();
-  const success = deletePortfolioItem(id);
+  const success = await deletePortfolioItem(id);
   if (!success) {
     return NextResponse.json({ error: "Item not found" }, { status: 404 });
   }
@@ -88,6 +100,6 @@ export async function PUT(request: NextRequest) {
   if (!Array.isArray(orderedIds)) {
     return NextResponse.json({ error: "Invalid data" }, { status: 400 });
   }
-  const items = reorderPortfolioItems(orderedIds);
+  const items = await reorderPortfolioItems(orderedIds);
   return NextResponse.json(items);
 }

@@ -3,8 +3,8 @@ import { getPortfolioItems } from "@/lib/portfolio";
 
 export const dynamic = "force-dynamic";
 
-export default function PortfolioPage() {
-  const items = getPortfolioItems();
+export default async function PortfolioPage() {
+  const items = await getPortfolioItems();
 
   return (
     <div className="min-h-screen bg-white">
@@ -25,7 +25,7 @@ export default function PortfolioPage() {
                 className="break-inside-avoid rounded-lg overflow-hidden"
               >
                 <Image
-                  src={`/uploads/${item.filename}`}
+                  src={item.imageUrl}
                   alt={item.originalName}
                   width={800}
                   height={600}

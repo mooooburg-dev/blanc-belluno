@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import { supabase, getStorageUrl } from "./supabase";
 
 export const CATEGORIES = [
   "WEDDING",
@@ -19,90 +18,163 @@ export interface PortfolioItem {
   title: string;
   tag: string;
   createdAt: string;
+  imageUrl: string;
 }
 
-const DATA_PATH = path.join(process.cwd(), "data", "portfolio.json");
-
-function ensureDataDir() {
-  const dir = path.dirname(DATA_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  if (!fs.existsSync(DATA_PATH)) {
-    fs.writeFileSync(DATA_PATH, JSON.stringify([], null, 2));
-  }
+interface PortfolioRow {
+  id: string;
+  filename: string;
+  original_name: string;
+  sort_order: number;
+  category: string;
+  title: string;
+  tag: string;
+  created_at: string;
 }
 
-export function getPortfolioItems(): PortfolioItem[] {
-  try {
-    const raw = fs.readFileSync(DATA_PATH, "utf-8");
-    const items: PortfolioItem[] = JSON.parse(raw);
-    return items.sort((a, b) => a.order - b.order);
-  } catch {
-    // Vercel read-only 파일 시스템 또는 data 파일 미존재 시 빈 배열 반환
+function toPortfolioItem(row: PortfolioRow): PortfolioItem {
+  return {
+    id: row.id,
+    filename: row.filename,
+    originalName: row.original_name,
+    order: row.sort_order,
+    category: row.category as Category,
+    title: row.title,
+    tag: row.tag,
+    createdAt: row.created_at,
+    imageUrl: getStorageUrl(row.filename),
+  };
+}
+
+export async function getPortfolioItems(): Promise<PortfolioItem[]> {
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("belluno_portfolio")
+    .select("*")
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Failed to fetch portfolio:", error.message);
     return [];
   }
+
+  return (data as PortfolioRow[]).map(toPortfolioItem);
 }
 
-export function savePortfolioItems(items: PortfolioItem[]) {
-  ensureDataDir();
-  fs.writeFileSync(DATA_PATH, JSON.stringify(items, null, 2));
-}
+export async function addPortfolioItem(
+  item: Omit<PortfolioItem, "order" | "imageUrl">
+): Promise<PortfolioItem | null> {
+  if (!supabase) return null;
 
-export function addPortfolioItem(
-  item: Omit<PortfolioItem, "order">
-): PortfolioItem {
-  const items = getPortfolioItems();
-  const maxOrder =
-    items.length > 0 ? Math.max(...items.map((i) => i.order)) : -1;
-  const newItem: PortfolioItem = { ...item, order: maxOrder + 1 };
-  items.push(newItem);
-  savePortfolioItems(items);
-  return newItem;
-}
+  // 현재 최대 sort_order 조회
+  const { data: maxRow } = await supabase
+    .from("belluno_portfolio")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .single();
 
-export function updatePortfolioItem(
-  id: string,
-  updates: Partial<Pick<PortfolioItem, "category" | "title" | "tag">>
-): PortfolioItem | null {
-  const items = getPortfolioItems();
-  const item = items.find((i) => i.id === id);
-  if (!item) return null;
-  Object.assign(item, updates);
-  savePortfolioItems(items);
-  return item;
-}
+  const nextOrder = maxRow ? maxRow.sort_order + 1 : 0;
 
-export function deletePortfolioItem(id: string): boolean {
-  const items = getPortfolioItems();
-  const index = items.findIndex((i) => i.id === id);
-  if (index === -1) return false;
+  const { data, error } = await supabase
+    .from("belluno_portfolio")
+    .insert({
+      id: item.id,
+      filename: item.filename,
+      original_name: item.originalName,
+      sort_order: nextOrder,
+      category: item.category,
+      title: item.title,
+      tag: item.tag,
+    })
+    .select()
+    .single();
 
-  const deleted = items[index];
-  const filePath = path.join(
-    process.cwd(),
-    "public",
-    "uploads",
-    deleted.filename
-  );
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
+  if (error) {
+    console.error("Failed to add portfolio item:", error.message);
+    return null;
   }
 
-  items.splice(index, 1);
-  items.sort((a, b) => a.order - b.order).forEach((item, i) => {
-    item.order = i;
-  });
-  savePortfolioItems(items);
+  return toPortfolioItem(data as PortfolioRow);
+}
+
+export async function updatePortfolioItem(
+  id: string,
+  updates: Partial<Pick<PortfolioItem, "category" | "title" | "tag">>
+): Promise<PortfolioItem | null> {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from("belluno_portfolio")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to update portfolio item:", error.message);
+    return null;
+  }
+
+  return toPortfolioItem(data as PortfolioRow);
+}
+
+export async function deletePortfolioItem(id: string): Promise<boolean> {
+  if (!supabase) return false;
+
+  // 파일명 조회 (Storage 삭제용)
+  const { data: item } = await supabase
+    .from("belluno_portfolio")
+    .select("filename")
+    .eq("id", id)
+    .single();
+
+  if (!item) return false;
+
+  // Storage에서 이미지 삭제
+  await supabase.storage.from("belluno-uploads").remove([item.filename]);
+
+  // DB에서 삭제
+  const { error } = await supabase
+    .from("belluno_portfolio")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Failed to delete portfolio item:", error.message);
+    return false;
+  }
+
+  // sort_order 재정렬
+  const { data: remaining } = await supabase
+    .from("belluno_portfolio")
+    .select("id")
+    .order("sort_order", { ascending: true });
+
+  if (remaining) {
+    for (let i = 0; i < remaining.length; i++) {
+      await supabase
+        .from("belluno_portfolio")
+        .update({ sort_order: i })
+        .eq("id", remaining[i].id);
+    }
+  }
+
   return true;
 }
 
-export function reorderPortfolioItems(orderedIds: string[]) {
-  const items = getPortfolioItems();
-  orderedIds.forEach((id, index) => {
-    const item = items.find((i) => i.id === id);
-    if (item) item.order = index;
-  });
-  savePortfolioItems(items);
+export async function reorderPortfolioItems(
+  orderedIds: string[]
+): Promise<PortfolioItem[]> {
+  if (!supabase) return [];
+
+  for (let i = 0; i < orderedIds.length; i++) {
+    await supabase
+      .from("belluno_portfolio")
+      .update({ sort_order: i })
+      .eq("id", orderedIds[i]);
+  }
+
   return getPortfolioItems();
 }

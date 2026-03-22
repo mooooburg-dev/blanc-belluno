@@ -30,6 +30,7 @@ interface PortfolioItem {
   category: Category;
   title: string;
   tag: string;
+  imageUrl: string;
 }
 
 interface SiteSettings {

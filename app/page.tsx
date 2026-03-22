@@ -10,9 +10,9 @@ import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
-export default function Home() {
-  const portfolioItems = getPortfolioItems();
-  const settings = getSettings();
+export default async function Home() {
+  const portfolioItems = await getPortfolioItems();
+  const settings = await getSettings();
 
   return (
     <>

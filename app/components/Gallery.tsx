@@ -11,6 +11,7 @@ interface PortfolioItem {
   category: string;
   title: string;
   tag: string;
+  imageUrl: string;
 }
 
 const CATEGORIES = ["ALL", "WEDDING", "BABY SHOWER", "PARTY", "CORPORATE"];
@@ -125,7 +126,7 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
                 >
                   <div className="w-full aspect-[4/5] relative overflow-hidden">
                     <Image
-                      src={`/uploads/${item.filename}`}
+                      src={item.imageUrl}
                       alt={item.title || item.originalName}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"

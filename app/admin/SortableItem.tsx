@@ -16,6 +16,7 @@ interface PortfolioItem {
   category: Category;
   title: string;
   tag: string;
+  imageUrl: string;
 }
 
 interface SortableItemProps {
@@ -114,7 +115,7 @@ export default function SortableItem({
       {/* Image */}
       <div className="aspect-square relative">
         <Image
-          src={`/uploads/${item.filename}`}
+          src={item.imageUrl}
           alt={item.originalName}
           fill
           className="object-cover"

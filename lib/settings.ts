@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import { supabase } from "./supabase";
 
 export interface SiteSettings {
   instagram: string;
@@ -22,33 +21,45 @@ const defaultSettings: SiteSettings = {
     "당신의 특별한 날을 더욱 빛나게.\n섬세한 감각으로 빚어내는 프리미엄 파티 스타일링.",
 };
 
-const SETTINGS_PATH = path.join(process.cwd(), "data", "settings.json");
+export async function getSettings(): Promise<SiteSettings> {
+  if (!supabase) return { ...defaultSettings };
 
-function ensureSettingsFile() {
-  const dir = path.dirname(SETTINGS_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  if (!fs.existsSync(SETTINGS_PATH)) {
-    fs.writeFileSync(SETTINGS_PATH, JSON.stringify(defaultSettings, null, 2));
-  }
-}
+  const { data, error } = await supabase
+    .from("belluno_settings")
+    .select("key, value");
 
-export function getSettings(): SiteSettings {
-  try {
-    const raw = fs.readFileSync(SETTINGS_PATH, "utf-8");
-    return { ...defaultSettings, ...JSON.parse(raw) };
-  } catch {
-    // Vercel read-only 파일 시스템 또는 settings 파일 미존재 시 기본값 반환
+  if (error || !data) {
+    console.error("Failed to fetch settings:", error?.message);
     return { ...defaultSettings };
   }
+
+  const settings = { ...defaultSettings };
+  for (const row of data) {
+    if (row.key in settings) {
+      (settings as Record<string, string>)[row.key] = row.value;
+    }
+  }
+
+  return settings;
 }
 
-export function updateSettings(
+export async function updateSettings(
   updates: Partial<SiteSettings>
-): SiteSettings {
-  const current = getSettings();
-  const updated = { ...current, ...updates };
-  fs.writeFileSync(SETTINGS_PATH, JSON.stringify(updated, null, 2));
-  return updated;
+): Promise<SiteSettings> {
+  if (!supabase) return { ...defaultSettings, ...updates };
+
+  const entries = Object.entries(updates).filter(
+    ([key]) => key in defaultSettings
+  );
+
+  for (const [key, value] of entries) {
+    await supabase
+      .from("belluno_settings")
+      .upsert(
+        { key, value: value as string, updated_at: new Date().toISOString() },
+        { onConflict: "key" }
+      );
+  }
+
+  return getSettings();
 }
