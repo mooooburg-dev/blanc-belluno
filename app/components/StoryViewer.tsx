@@ -12,6 +12,7 @@ interface Story {
 
 const STORY_DURATION = 5000;
 const VIDEO_DURATION = 15000;
+const DISMISS_THRESHOLD = 120; // px — 이 이상 내리면 닫기
 
 export default function StoryViewer({
   isOpen,
@@ -29,15 +30,20 @@ export default function StoryViewer({
   const [paused, setPaused] = useState(false);
   const [mediaLoaded, setMediaLoaded] = useState(false);
 
-  // 모든 타이머 상태를 ref로 관리하여 리렌더 사이클과 분리
+  // 스와이프 다운 dismiss
+  const [swipeY, setSwipeY] = useState(0);
+  const [swiping, setSwiping] = useState(false);
+  const swipeStartRef = useRef<{ y: number; x: number } | null>(null);
+  const swipeLockedRef = useRef<"vertical" | "horizontal" | null>(null);
+
+  // 타이머 refs
   const rafRef = useRef(0);
   const timerStartRef = useRef(0);
   const savedElapsedRef = useRef(0);
   const isTouchRef = useRef(false);
   const touchStartRef = useRef(0);
-  const generationRef = useRef(0); // goTo 호출마다 증가, stale setProgress 방지
+  const generationRef = useRef(0);
 
-  // 최신 값을 ref로 유지 (rAF 콜백에서 참조)
   const currentIndexRef = useRef(currentIndex);
   const storiesLenRef = useRef(stories.length);
   const onCloseRef = useRef(onClose);
@@ -53,7 +59,6 @@ export default function StoryViewer({
     rafRef.current = 0;
   }, []);
 
-  // 스토리 이동 — 한 곳에서만 상태 변경
   const goTo = useCallback((index: number) => {
     stopAnimation();
     generationRef.current += 1;
@@ -81,6 +86,11 @@ export default function StoryViewer({
     goTo(prev >= 0 ? prev : 0);
   }, [goTo]);
 
+  const handleClose = useCallback(() => {
+    goTo(0);
+    onCloseRef.current();
+  }, [goTo]);
+
   // --- 타이머 ---
 
   useEffect(() => {
@@ -96,9 +106,7 @@ export default function StoryViewer({
     const gen = generationRef.current;
 
     const tick = (now: number) => {
-      // goTo가 호출되었으면 이 tick 체인은 무효
       if (gen !== generationRef.current) return;
-
       const elapsed = now - startTime;
       const pct = Math.min(elapsed / duration, 1);
       setProgress(pct);
@@ -121,18 +129,27 @@ export default function StoryViewer({
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { goTo(0); onCloseRef.current(); }
+      if (e.key === "Escape") handleClose();
       if (e.key === "ArrowRight") goNext();
       if (e.key === "ArrowLeft") goPrev();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [isOpen, goNext, goPrev, goTo]);
+  }, [isOpen, goNext, goPrev, handleClose]);
 
-  // 스크롤 잠금
+  // 스크롤 잠금 + pull-to-refresh 차단
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.overscrollBehavior = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.overscrollBehavior = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.overscrollBehavior = "";
+    };
   }, [isOpen]);
 
   // 프리로딩
@@ -147,6 +164,71 @@ export default function StoryViewer({
     }
   }, [isOpen, currentIndex, stories]);
 
+  // --- 스와이프 다운 dismiss ---
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      swipeStartRef.current = { y: touch.clientY, x: touch.clientX };
+      swipeLockedRef.current = null;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!swipeStartRef.current) return;
+      const touch = e.touches[0];
+      const dy = touch.clientY - swipeStartRef.current.y;
+      const dx = touch.clientX - swipeStartRef.current.x;
+
+      // 방향 잠금: 최초 10px 이동으로 수직/수평 결정
+      if (!swipeLockedRef.current) {
+        if (Math.abs(dy) > 10 || Math.abs(dx) > 10) {
+          swipeLockedRef.current = Math.abs(dy) > Math.abs(dx) ? "vertical" : "horizontal";
+        } else {
+          return;
+        }
+      }
+
+      if (swipeLockedRef.current !== "vertical") return;
+
+      // 아래로만 (위로 스와이프는 무시)
+      if (dy <= 0) {
+        setSwipeY(0);
+        return;
+      }
+
+      e.preventDefault(); // 브라우저 pull-to-refresh 차단
+      setSwiping(true);
+      setSwipeY(dy);
+    };
+
+    const onTouchEnd = () => {
+      if (swipeLockedRef.current === "vertical" && swipeY > DISMISS_THRESHOLD) {
+        // 충분히 내렸으면 닫기
+        handleClose();
+      }
+      setSwipeY(0);
+      setSwiping(false);
+      swipeStartRef.current = null;
+      swipeLockedRef.current = null;
+    };
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [isOpen, swipeY, handleClose]);
+
   // --- 렌더 ---
 
   if (!isOpen || stories.length === 0) return null;
@@ -156,7 +238,6 @@ export default function StoryViewer({
 
   const timeAgo = getTimeAgo(new Date(currentStory.timestamp));
 
-  // pause/resume — ref만 업데이트하고 state 1번만 변경
   const doPause = () => {
     savedElapsedRef.current = performance.now() - timerStartRef.current;
     setPaused(true);
@@ -166,7 +247,6 @@ export default function StoryViewer({
     setPaused(false);
   };
 
-  // PC: mousedown → pause, 어디서든 mouseup → resume
   const onMouseDown = () => {
     doPause();
     const onUp = () => {
@@ -176,26 +256,25 @@ export default function StoryViewer({
     window.addEventListener("mouseup", onUp);
   };
 
-  // 모바일 터치
-  const onTouchStart = () => {
+  const onAreaTouchStart = () => {
     isTouchRef.current = true;
     touchStartRef.current = performance.now();
     doPause();
   };
 
-  const onTouchEnd = (side: "left" | "right") => {
+  const onAreaTouchEnd = (side: "left" | "right") => {
+    // 스와이프 중이면 탭 무시
+    if (swiping || swipeLockedRef.current === "vertical") return;
+
     const duration = performance.now() - touchStartRef.current;
     if (duration < 200) {
-      // 짧은 탭 → 이동 (resume 불필요, goTo가 paused를 false로 리셋)
       side === "left" ? goPrev() : goNext();
     } else {
-      // 롱프레스 해제 → 재개
       doResume();
     }
   };
 
-  // PC 클릭 (터치 디바이스에서는 무시)
-  const onClick = (side: "left" | "right") => {
+  const onAreaClick = (side: "left" | "right") => {
     if (isTouchRef.current) {
       isTouchRef.current = false;
       return;
@@ -203,19 +282,31 @@ export default function StoryViewer({
     side === "left" ? goPrev() : goNext();
   };
 
-  const handleClose = () => {
-    goTo(0);
-    onCloseRef.current();
-  };
+  // 스와이프 시각 효과
+  const swipeProgress = Math.min(swipeY / DISMISS_THRESHOLD, 1);
+  const overlayOpacity = swiping ? 0.95 - swipeProgress * 0.5 : 0.95;
+  const contentTransform = swiping ? `translateY(${swipeY}px) scale(${1 - swipeProgress * 0.05})` : undefined;
+  const contentTransition = swiping ? "none" : "transform 0.3s ease";
 
   return (
     <div
-      className="fixed inset-0 z-100 bg-black/95 flex items-center justify-center"
+      ref={containerRef}
+      className="fixed inset-0 z-100 flex items-center justify-center"
+      style={{
+        backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})`,
+        touchAction: "none",
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) handleClose();
       }}
     >
-      <div className="relative w-full h-full max-w-[420px] max-h-[90vh] mx-auto flex flex-col">
+      <div
+        className="relative w-full h-full max-w-[420px] max-h-[90vh] mx-auto flex flex-col"
+        style={{
+          transform: contentTransform,
+          transition: contentTransition,
+        }}
+      >
         {/* 진행 바 + 프로필 + 닫기 */}
         <div className="relative z-20 px-3 pt-3">
           <div className="flex gap-1 pb-2">
@@ -248,9 +339,14 @@ export default function StoryViewer({
               height={32}
               className="rounded-full"
             />
-            <span className="text-white text-xs font-medium tracking-wide">
-              blancbelluno
-            </span>
+            <a
+              href="https://instagram.com/blanc_belluno"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white text-xs font-medium tracking-wide hover:underline"
+            >
+              blanc_belluno
+            </a>
             <span className="text-white/50 text-xs">{timeAgo}</span>
             <button
               onClick={handleClose}
@@ -298,18 +394,18 @@ export default function StoryViewer({
           {/* 좌측 탭 */}
           <div
             className="absolute left-0 top-0 w-1/3 h-full z-10 cursor-pointer"
-            onClick={() => onClick("left")}
+            onClick={() => onAreaClick("left")}
             onMouseDown={onMouseDown}
-            onTouchStart={onTouchStart}
-            onTouchEnd={() => onTouchEnd("left")}
+            onTouchStart={onAreaTouchStart}
+            onTouchEnd={() => onAreaTouchEnd("left")}
           />
           {/* 우측 탭 */}
           <div
             className="absolute right-0 top-0 w-2/3 h-full z-10 cursor-pointer"
-            onClick={() => onClick("right")}
+            onClick={() => onAreaClick("right")}
             onMouseDown={onMouseDown}
-            onTouchStart={onTouchStart}
-            onTouchEnd={() => onTouchEnd("right")}
+            onTouchStart={onAreaTouchStart}
+            onTouchEnd={() => onAreaTouchEnd("right")}
           />
         </div>
       </div>
