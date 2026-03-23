@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Image from "next/image";
 
 interface Story {
@@ -10,7 +10,8 @@ interface Story {
   timestamp: string;
 }
 
-const STORY_DURATION = 5000; // 5초
+const STORY_DURATION = 5000;
+const VIDEO_DURATION = 15000;
 
 export default function StoryViewer({
   isOpen,
@@ -21,84 +22,89 @@ export default function StoryViewer({
   onClose: () => void;
   stories: Story[];
 }) {
-  // 오래된 스토리부터 보여주기 (인스타그램 방식)
-  const stories = [...rawStories].reverse();
+  const stories = useMemo(() => [...rawStories].reverse(), [rawStories]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [mediaLoaded, setMediaLoaded] = useState(false);
+
+  // 모든 타이머 상태를 ref로 관리하여 리렌더 사이클과 분리
   const rafRef = useRef(0);
-  const startTimeRef = useRef(0);
-  const elapsedRef = useRef(0);
-  const longPressRef = useRef(false);
-  const touchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timerStartRef = useRef(0);
+  const savedElapsedRef = useRef(0);
   const isTouchRef = useRef(false);
+  const touchStartRef = useRef(0);
+  const generationRef = useRef(0); // goTo 호출마다 증가, stale setProgress 방지
 
-  // goNext/goPrev를 ref로 안정화하여 useEffect 재실행 방지
-  const goNextRef = useRef<() => void>(() => {});
+  // 최신 값을 ref로 유지 (rAF 콜백에서 참조)
+  const currentIndexRef = useRef(currentIndex);
+  const storiesLenRef = useRef(stories.length);
+  const onCloseRef = useRef(onClose);
 
-  // onClose 래핑: 닫을 때 상태 리셋
-  const handleClose = useCallback(() => {
-    setCurrentIndex(0);
-    setProgress(0);
-    setMediaLoaded(false);
-    elapsedRef.current = 0;
-    onClose();
-  }, [onClose]);
+  useEffect(() => { currentIndexRef.current = currentIndex; }, [currentIndex]);
+  useEffect(() => { storiesLenRef.current = stories.length; }, [stories.length]);
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
 
-  const handleCloseRef = useRef(handleClose);
-  useEffect(() => {
-    handleCloseRef.current = handleClose;
-  }, [handleClose]);
+  // --- 핵심 함수들 ---
 
-  const goNext = useCallback(() => {
-    setCurrentIndex((prev) => {
-      if (prev < rawStories.length - 1) {
-        setProgress(0);
-        setMediaLoaded(false);
-        elapsedRef.current = 0;
-        return prev + 1;
-      } else {
-        handleCloseRef.current();
-        return prev;
-      }
-    });
-  }, [rawStories.length]);
-
-  const goPrev = useCallback(() => {
-    setCurrentIndex((prev) => {
-      if (prev > 0) {
-        setProgress(0);
-        setMediaLoaded(false);
-        elapsedRef.current = 0;
-        return prev - 1;
-      }
-      return prev;
-    });
+  const stopAnimation = useCallback(() => {
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = 0;
   }, []);
 
+  // 스토리 이동 — 한 곳에서만 상태 변경
+  const goTo = useCallback((index: number) => {
+    stopAnimation();
+    generationRef.current += 1;
+    savedElapsedRef.current = 0;
+    timerStartRef.current = 0;
+    setProgress(0);
+    setMediaLoaded(false);
+    setPaused(false);
+    setCurrentIndex(index);
+  }, [stopAnimation]);
+
+  const goNext = useCallback(() => {
+    const next = currentIndexRef.current + 1;
+    if (next < storiesLenRef.current) {
+      goTo(next);
+    } else {
+      stopAnimation();
+      goTo(0);
+      onCloseRef.current();
+    }
+  }, [goTo, stopAnimation]);
+
+  const goPrev = useCallback(() => {
+    const prev = currentIndexRef.current - 1;
+    goTo(prev >= 0 ? prev : 0);
+  }, [goTo]);
+
+  // --- 타이머 ---
+
   useEffect(() => {
-    goNextRef.current = goNext;
-  }, [goNext]);
+    if (!isOpen || paused || !mediaLoaded || stories.length === 0) return;
 
-  // 진행 바 타이머 — requestAnimationFrame 사용
-  useEffect(() => {
-    if (!isOpen || isPaused || !mediaLoaded || stories.length === 0) return;
+    const story = stories[currentIndex];
+    if (!story) return;
 
-    const currentStory = stories[currentIndex];
-    const duration =
-      currentStory?.mediaType === "VIDEO" ? 15000 : STORY_DURATION;
+    const duration = story.mediaType === "VIDEO" ? VIDEO_DURATION : STORY_DURATION;
+    const startTime = performance.now() - savedElapsedRef.current;
+    timerStartRef.current = startTime;
 
-    startTimeRef.current = performance.now() - elapsedRef.current;
+    const gen = generationRef.current;
 
     const tick = (now: number) => {
-      const elapsed = now - startTimeRef.current;
+      // goTo가 호출되었으면 이 tick 체인은 무효
+      if (gen !== generationRef.current) return;
+
+      const elapsed = now - startTime;
       const pct = Math.min(elapsed / duration, 1);
       setProgress(pct);
 
       if (pct >= 1) {
-        goNextRef.current();
+        goNext();
         return;
       }
       rafRef.current = requestAnimationFrame(tick);
@@ -109,88 +115,87 @@ export default function StoryViewer({
     return () => {
       cancelAnimationFrame(rafRef.current);
     };
-  }, [isOpen, currentIndex, isPaused, mediaLoaded, stories]);
+  }, [isOpen, currentIndex, paused, mediaLoaded, stories, goNext]);
 
-  // 키보드 네비게이션
+  // 키보드
   useEffect(() => {
     if (!isOpen) return;
-
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") handleClose();
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { goTo(0); onCloseRef.current(); }
       if (e.key === "ArrowRight") goNext();
       if (e.key === "ArrowLeft") goPrev();
     };
-
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [isOpen, goNext, goPrev, handleClose]);
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isOpen, goNext, goPrev, goTo]);
 
   // 스크롤 잠금
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-
-  // 다음 2개 이미지 프리로딩
+  // 프리로딩
   useEffect(() => {
     if (!isOpen || stories.length === 0) return;
-
-    for (let offset = 1; offset <= 2; offset++) {
-      const nextIndex = currentIndex + offset;
-      if (nextIndex < stories.length) {
-        const nextStory = stories[nextIndex];
-        if (nextStory.mediaType === "IMAGE") {
-          const img = new window.Image();
-          img.src = nextStory.mediaUrl;
-        }
+    for (let i = 1; i <= 2; i++) {
+      const idx = currentIndex + i;
+      if (idx < stories.length && stories[idx].mediaType === "IMAGE") {
+        const img = new window.Image();
+        img.src = stories[idx].mediaUrl;
       }
     }
   }, [isOpen, currentIndex, stories]);
 
+  // --- 렌더 ---
+
   if (!isOpen || stories.length === 0) return null;
 
   const currentStory = stories[currentIndex];
-  const storyTime = new Date(currentStory.timestamp);
-  const timeAgo = getTimeAgo(storyTime);
+  if (!currentStory) return null;
 
-  const pauseTimer = () => {
-    setIsPaused(true);
-    elapsedRef.current = Date.now() - startTimeRef.current;
+  const timeAgo = getTimeAgo(new Date(currentStory.timestamp));
+
+  // pause/resume — ref만 업데이트하고 state 1번만 변경
+  const doPause = () => {
+    savedElapsedRef.current = performance.now() - timerStartRef.current;
+    setPaused(true);
   };
 
-  const resumeTimer = () => {
-    setIsPaused(false);
+  const doResume = () => {
+    setPaused(false);
   };
 
-  // 모바일 터치: 길게 누르면 일시정지, 짧게 탭하면 이전/다음
-  const handleTouchStart = () => {
+  // PC: mousedown → pause, 어디서든 mouseup → resume
+  const onMouseDown = () => {
+    doPause();
+    const onUp = () => {
+      doResume();
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mouseup", onUp);
+  };
+
+  // 모바일 터치
+  const onTouchStart = () => {
     isTouchRef.current = true;
-    longPressRef.current = false;
-    touchTimerRef.current = setTimeout(() => {
-      longPressRef.current = true;
-      pauseTimer();
-    }, 150);
+    touchStartRef.current = performance.now();
+    doPause();
   };
 
-  const handleTouchEnd = (side: "left" | "right") => {
-    if (touchTimerRef.current) clearTimeout(touchTimerRef.current);
-    if (longPressRef.current) {
-      resumeTimer();
-    } else {
+  const onTouchEnd = (side: "left" | "right") => {
+    const duration = performance.now() - touchStartRef.current;
+    if (duration < 200) {
+      // 짧은 탭 → 이동 (resume 불필요, goTo가 paused를 false로 리셋)
       side === "left" ? goPrev() : goNext();
+    } else {
+      // 롱프레스 해제 → 재개
+      doResume();
     }
-    longPressRef.current = false;
   };
 
-  // PC에서만 onClick 처리 (터치 디바이스에서는 무시)
-  const handleClick = (side: "left" | "right") => {
+  // PC 클릭 (터치 디바이스에서는 무시)
+  const onClick = (side: "left" | "right") => {
     if (isTouchRef.current) {
       isTouchRef.current = false;
       return;
@@ -198,24 +203,29 @@ export default function StoryViewer({
     side === "left" ? goPrev() : goNext();
   };
 
+  const handleClose = () => {
+    goTo(0);
+    onCloseRef.current();
+  };
+
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+      className="fixed inset-0 z-100 bg-black/95 flex items-center justify-center"
       onClick={(e) => {
-        // PC: 검정 배경(콘텐츠 영역 바깥) 클릭 시 닫기
         if (e.target === e.currentTarget) handleClose();
       }}
     >
-      {/* 메인 콘텐츠 영역 */}
       <div className="relative w-full h-full max-w-[420px] max-h-[90vh] mx-auto flex flex-col">
-        {/* 상단: 진행 바 + 프로필 + 닫기 버튼 */}
+        {/* 진행 바 + 프로필 + 닫기 */}
         <div className="relative z-20 px-3 pt-3">
-          {/* 진행 바 */}
           <div className="flex gap-1 pb-2">
             {stories.map((_, i) => (
-              <div key={i} className="flex-1 h-[2px] bg-white/30 rounded-full overflow-hidden">
+              <div
+                key={i}
+                className="flex-1 h-[2px] bg-white/30 rounded-full overflow-hidden"
+              >
                 <div
-                  className="h-full bg-white rounded-full transition-none"
+                  className="h-full bg-white rounded-full"
                   style={{
                     width:
                       i < currentIndex
@@ -223,13 +233,13 @@ export default function StoryViewer({
                         : i === currentIndex
                           ? `${progress * 100}%`
                           : "0%",
+                    transition: "none",
                   }}
                 />
               </div>
             ))}
           </div>
 
-          {/* 프로필 + 닫기 */}
           <div className="flex items-center gap-2.5 pb-2">
             <Image
               src="/blanc_belluno_logo.jpg"
@@ -254,11 +264,10 @@ export default function StoryViewer({
           </div>
         </div>
 
-        {/* 스토리 미디어 */}
+        {/* 미디어 */}
         <div className="relative flex-1 overflow-hidden rounded-sm bg-black">
-          {/* 로딩 스피너 */}
           {!mediaLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center z-[5]">
+            <div className="absolute inset-0 flex items-center justify-center z-5">
               <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             </div>
           )}
@@ -286,25 +295,21 @@ export default function StoryViewer({
             />
           )}
 
-          {/* 좌측 탭 영역 */}
+          {/* 좌측 탭 */}
           <div
             className="absolute left-0 top-0 w-1/3 h-full z-10 cursor-pointer"
-            onClick={() => handleClick("left")}
-            onMouseDown={pauseTimer}
-            onMouseUp={resumeTimer}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={() => handleTouchEnd("left")}
-            aria-label="이전 스토리"
+            onClick={() => onClick("left")}
+            onMouseDown={onMouseDown}
+            onTouchStart={onTouchStart}
+            onTouchEnd={() => onTouchEnd("left")}
           />
-          {/* 우측 탭 영역 */}
+          {/* 우측 탭 */}
           <div
             className="absolute right-0 top-0 w-2/3 h-full z-10 cursor-pointer"
-            onClick={() => handleClick("right")}
-            onMouseDown={pauseTimer}
-            onMouseUp={resumeTimer}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={() => handleTouchEnd("right")}
-            aria-label="다음 스토리"
+            onClick={() => onClick("right")}
+            onMouseDown={onMouseDown}
+            onTouchStart={onTouchStart}
+            onTouchEnd={() => onTouchEnd("right")}
           />
         </div>
       </div>
@@ -313,10 +318,8 @@ export default function StoryViewer({
 }
 
 function getTimeAgo(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
+  const diff = Date.now() - date.getTime();
   const hours = Math.floor(diff / (1000 * 60 * 60));
-
   if (hours < 1) {
     const minutes = Math.floor(diff / (1000 * 60));
     return `${minutes}분 전`;
