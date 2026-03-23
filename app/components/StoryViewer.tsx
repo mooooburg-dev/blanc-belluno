@@ -15,15 +15,19 @@ const STORY_DURATION = 5000; // 5초
 export default function StoryViewer({
   isOpen,
   onClose,
-  stories,
+  stories: rawStories,
 }: {
   isOpen: boolean;
   onClose: () => void;
   stories: Story[];
 }) {
+  // 오래된 스토리부터 보여주기 (인스타그램 방식)
+  const stories = [...rawStories].reverse();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [mediaLoaded, setMediaLoaded] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef(0);
   const elapsedRef = useRef(0);
@@ -32,6 +36,7 @@ export default function StoryViewer({
     if (currentIndex < stories.length - 1) {
       setCurrentIndex((i) => i + 1);
       setProgress(0);
+      setMediaLoaded(false);
       elapsedRef.current = 0;
     } else {
       onClose();
@@ -42,13 +47,14 @@ export default function StoryViewer({
     if (currentIndex > 0) {
       setCurrentIndex((i) => i - 1);
       setProgress(0);
+      setMediaLoaded(false);
       elapsedRef.current = 0;
     }
   }, [currentIndex]);
 
-  // 진행 바 타이머
+  // 진행 바 타이머 — 미디어 로드 후 시작
   useEffect(() => {
-    if (!isOpen || isPaused || stories.length === 0) return;
+    if (!isOpen || isPaused || !mediaLoaded || stories.length === 0) return;
 
     const currentStory = stories[currentIndex];
     const duration =
@@ -69,7 +75,7 @@ export default function StoryViewer({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isOpen, currentIndex, isPaused, stories, goNext]);
+  }, [isOpen, currentIndex, isPaused, mediaLoaded, stories, goNext]);
 
   // 키보드 네비게이션
   useEffect(() => {
@@ -93,6 +99,7 @@ export default function StoryViewer({
       document.body.style.overflow = "";
       setCurrentIndex(0);
       setProgress(0);
+      setMediaLoaded(false);
       elapsedRef.current = 0;
     }
     return () => {
@@ -169,14 +176,22 @@ export default function StoryViewer({
           }}
           onTouchEnd={() => setIsPaused(false)}
         >
+          {/* 로딩 스피너 */}
+          {!mediaLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center z-2">
+              <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            </div>
+          )}
+
           {currentStory.mediaType === "VIDEO" ? (
             <video
               key={currentStory.id}
               src={currentStory.mediaUrl}
-              className="w-full h-full object-contain"
+              className={`w-full h-full object-contain transition-opacity duration-200 ${mediaLoaded ? "opacity-100" : "opacity-0"}`}
               autoPlay
               muted
               playsInline
+              onLoadedData={() => setMediaLoaded(true)}
             />
           ) : (
             <Image
@@ -184,9 +199,10 @@ export default function StoryViewer({
               src={currentStory.mediaUrl}
               alt="Story"
               fill
-              className="object-contain"
+              className={`object-contain transition-opacity duration-200 ${mediaLoaded ? "opacity-100" : "opacity-0"}`}
               sizes="420px"
               priority
+              onLoad={() => setMediaLoaded(true)}
             />
           )}
 
