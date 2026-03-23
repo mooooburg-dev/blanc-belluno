@@ -28,34 +28,61 @@ export default function StoryViewer({
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [mediaLoaded, setMediaLoaded] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const rafRef = useRef(0);
   const startTimeRef = useRef(0);
   const elapsedRef = useRef(0);
   const longPressRef = useRef(false);
   const touchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTouchRef = useRef(false);
 
+  // goNext/goPrev를 ref로 안정화하여 useEffect 재실행 방지
+  const goNextRef = useRef<() => void>(() => {});
+
+  // onClose 래핑: 닫을 때 상태 리셋
+  const handleClose = useCallback(() => {
+    setCurrentIndex(0);
+    setProgress(0);
+    setMediaLoaded(false);
+    elapsedRef.current = 0;
+    onClose();
+  }, [onClose]);
+
+  const handleCloseRef = useRef(handleClose);
+  useEffect(() => {
+    handleCloseRef.current = handleClose;
+  }, [handleClose]);
+
   const goNext = useCallback(() => {
-    if (currentIndex < stories.length - 1) {
-      setCurrentIndex((i) => i + 1);
-      setProgress(0);
-      setMediaLoaded(false);
-      elapsedRef.current = 0;
-    } else {
-      onClose();
-    }
-  }, [currentIndex, stories.length, onClose]);
+    setCurrentIndex((prev) => {
+      if (prev < rawStories.length - 1) {
+        setProgress(0);
+        setMediaLoaded(false);
+        elapsedRef.current = 0;
+        return prev + 1;
+      } else {
+        handleCloseRef.current();
+        return prev;
+      }
+    });
+  }, [rawStories.length]);
 
   const goPrev = useCallback(() => {
-    if (currentIndex > 0) {
-      setCurrentIndex((i) => i - 1);
-      setProgress(0);
-      setMediaLoaded(false);
-      elapsedRef.current = 0;
-    }
-  }, [currentIndex]);
+    setCurrentIndex((prev) => {
+      if (prev > 0) {
+        setProgress(0);
+        setMediaLoaded(false);
+        elapsedRef.current = 0;
+        return prev - 1;
+      }
+      return prev;
+    });
+  }, []);
 
-  // 진행 바 타이머 — 미디어 로드 후 시작
+  useEffect(() => {
+    goNextRef.current = goNext;
+  }, [goNext]);
+
+  // 진행 바 타이머 — requestAnimationFrame 사용
   useEffect(() => {
     if (!isOpen || isPaused || !mediaLoaded || stories.length === 0) return;
 
@@ -63,36 +90,40 @@ export default function StoryViewer({
     const duration =
       currentStory?.mediaType === "VIDEO" ? 15000 : STORY_DURATION;
 
-    startTimeRef.current = Date.now() - elapsedRef.current;
+    startTimeRef.current = performance.now() - elapsedRef.current;
 
-    timerRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTimeRef.current;
+    const tick = (now: number) => {
+      const elapsed = now - startTimeRef.current;
       const pct = Math.min(elapsed / duration, 1);
       setProgress(pct);
 
       if (pct >= 1) {
-        goNext();
+        goNextRef.current();
+        return;
       }
-    }, 30);
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      cancelAnimationFrame(rafRef.current);
     };
-  }, [isOpen, currentIndex, isPaused, mediaLoaded, stories, goNext]);
+  }, [isOpen, currentIndex, isPaused, mediaLoaded, stories]);
 
   // 키보드 네비게이션
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
       if (e.key === "ArrowRight") goNext();
       if (e.key === "ArrowLeft") goPrev();
     };
 
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [isOpen, goNext, goPrev, onClose]);
+  }, [isOpen, goNext, goPrev, handleClose]);
 
   // 스크롤 잠금
   useEffect(() => {
@@ -100,15 +131,12 @@ export default function StoryViewer({
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      setCurrentIndex(0);
-      setProgress(0);
-      setMediaLoaded(false);
-      elapsedRef.current = 0;
     }
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
 
   // 다음 2개 이미지 프리로딩
   useEffect(() => {
@@ -175,7 +203,7 @@ export default function StoryViewer({
       className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
       onClick={(e) => {
         // PC: 검정 배경(콘텐츠 영역 바깥) 클릭 시 닫기
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) handleClose();
       }}
     >
       {/* 메인 콘텐츠 영역 */}
@@ -215,7 +243,7 @@ export default function StoryViewer({
             </span>
             <span className="text-white/50 text-xs">{timeAgo}</span>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="ml-auto p-2 -mr-2 text-white/80 hover:text-white transition-colors cursor-pointer"
               aria-label="닫기"
             >
