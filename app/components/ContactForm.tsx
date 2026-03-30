@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import DatePicker from "./DatePicker";
 
 interface SiteSettings {
   instagram: string;
@@ -256,13 +257,13 @@ export default function ContactForm({ settings }: { settings: SiteSettings }) {
                     </div>
                   </FormField>
                   <FormField label="행사 일자 *">
-                    <input
+                    <DatePicker
                       name="eventDate"
-                      type="date"
                       value={form.eventDate}
-                      onChange={handleChange}
+                      onChange={(name, value) =>
+                        setForm({ ...form, [name]: value })
+                      }
                       required
-                      className="input-belluno"
                     />
                   </FormField>
                 </div>
