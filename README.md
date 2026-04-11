@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Blanc Belluno 2026
 
-## Getting Started
+프리미엄 이벤트 스타일링 포트폴리오 웹사이트
 
-First, run the development server:
+## 기술 스택
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript**
+- **Tailwind CSS 4** — 커스텀 파스텔 팔레트, 글래스모피즘 효과
+- **Supabase** — PostgreSQL 데이터베이스 + 이미지 스토리지
+- **@dnd-kit** — 관리자 드래그앤드롭 정렬
+
+## 시작하기
 
 ```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000)에서 확인할 수 있습니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 환경 변수
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 
-## Learn More
+# Instagram Graph API
+INSTAGRAM_ACCESS_TOKEN=
+INSTAGRAM_USER_ID=
 
-To learn more about Next.js, take a look at the following resources:
+# 카카오 알림톡 (선택)
+KAKAO_REST_API_KEY=
+KAKAO_ALIMTALK_SENDER_KEY=
+KAKAO_ALIMTALK_TEMPLATE_CODE=
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 주요 기능
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **홈페이지** — 히어로 슬라이더, 서비스 소개, 갤러리, 상담 문의폼, 인스타그램 피드
+- **포트폴리오** — 카테고리별(Wedding, Baby Shower, Party, Corporate) 작업물 갤러리
+- **관리자 페이지** (`/admin`) — 포트폴리오/히어로 슬라이드 관리, 사이트 설정
 
-## Deploy on Vercel
+## 명령어
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev      # 개발 서버
+npm run build    # 프로덕션 빌드
+npm start        # 프로덕션 서버
+npm run lint     # ESLint 검사
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 배포
+
+Vercel에 배포 가능합니다. 환경 변수를 Vercel 프로젝트 설정에 추가하세요.
