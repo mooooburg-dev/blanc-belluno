@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
+
+const SWIPE_THRESHOLD = 50;
 
 interface SlideData {
   id: string;
@@ -70,11 +72,29 @@ export default function Hero({ slides }: HeroProps) {
     goTo((current + 1) % activeSlides.length);
   }, [current, goTo, activeSlides.length]);
 
+  const prev = useCallback(() => {
+    goTo((current - 1 + activeSlides.length) % activeSlides.length);
+  }, [current, goTo, activeSlides.length]);
+
   useEffect(() => {
     if (activeSlides.length <= 1) return;
     const timer = setInterval(next, INTERVAL);
     return () => clearInterval(timer);
   }, [next, activeSlides.length]);
+
+  const touchStartX = useRef<number | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) >= SWIPE_THRESHOLD) {
+      if (delta < 0) next();
+      else prev();
+    }
+    touchStartX.current = null;
+  };
 
   const handleScroll = (href: string) => {
     const el = document.querySelector(href);
@@ -89,7 +109,11 @@ export default function Hero({ slides }: HeroProps) {
       {/* 배너 슬라이드 + 하단 오버랩 카드 */}
       <div className="relative">
         {/* 이미지 배너 */}
-        <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden">
+        <div
+          className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden touch-pan-y"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           {activeSlides.map((slide, i) => (
             <div
               key={slide.id}
@@ -108,6 +132,32 @@ export default function Hero({ slides }: HeroProps) {
               />
             </div>
           ))}
+
+          {/* 좌우 네비게이션 */}
+          {activeSlides.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={prev}
+                aria-label="이전 슬라이드"
+                className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-colors"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={next}
+                aria-label="다음 슬라이드"
+                className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-colors"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </>
+          )}
 
           {/* 슬라이드 인디케이터 */}
           {activeSlides.length > 1 && (
