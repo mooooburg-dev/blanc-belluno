@@ -33,11 +33,14 @@ SUPABASE_SERVICE_ROLE_KEY=
 INSTAGRAM_ACCESS_TOKEN=
 INSTAGRAM_USER_ID=
 
-# 카카오 알림톡 (선택)
-KAKAO_REST_API_KEY=
-KAKAO_ALIMTALK_SENDER_KEY=
-KAKAO_ALIMTALK_TEMPLATE_CODE=
-ADMIN_PHONE=
+# 카카오 알림톡 (Solapi, 선택)
+SOLAPI_API_KEY=
+SOLAPI_API_SECRET=
+SOLAPI_PFID=                    # 카카오 비즈니스 채널 ID
+SOLAPI_SENDER_PHONE=            # 발신 전화번호 (Solapi에 등록된 번호)
+SOLAPI_TEMPLATE_ID_CUSTOMER=    # 고객 접수 확인 템플릿 ID
+SOLAPI_TEMPLATE_ID_ADMIN=       # 관리자 신규 상담 알림 템플릿 ID
+ADMIN_PHONE=                    # 관리자 수신 번호
 ```
 
 ## 주요 기능
