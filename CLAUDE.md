@@ -19,7 +19,7 @@ yarn lint        # ESLint 검사
 - **React**: React 19
 - **DB/스토리지**: Supabase (PostgreSQL + Storage)
 - **드래그앤드롭**: @dnd-kit
-- **외부 API**: Instagram Graph API, 카카오 알림톡
+- **외부 API**: Instagram Graph API, 카카오 알림톡 (Solapi SDK)
 
 ## 프로젝트 구조
 
@@ -42,7 +42,7 @@ yarn lint        # ESLint 검사
   - `hero-slides.ts` — 히어로 슬라이드 CRUD
   - `settings.ts` — 사이트 설정 관리
   - `instagram.ts` — Instagram Graph API 연동
-  - `kakao-alimtalk.ts` — 카카오 알림톡 발송
+  - `kakao-alimtalk.ts` — Solapi 기반 카카오 알림톡 발송 (고객/관리자 양쪽)
 - `data/` — JSON 폴백 데이터 (settings.json, portfolio.json)
 - `public/` — 정적 파일
 
