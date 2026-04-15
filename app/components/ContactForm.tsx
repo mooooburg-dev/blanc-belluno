@@ -47,6 +47,11 @@ const initialForm: FormData = {
   message: "",
 };
 
+const kakaoChannelId = process.env.NEXT_PUBLIC_KAKAO_CHANNEL_ID || "";
+const kakaoChatUrl = kakaoChannelId
+  ? `https://pf.kakao.com/${kakaoChannelId}/chat`
+  : "https://pf.kakao.com";
+
 export default function ContactForm({ settings }: { settings: SiteSettings }) {
   const [form, setForm] = useState<FormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
@@ -110,12 +115,27 @@ export default function ContactForm({ settings }: { settings: SiteSettings }) {
             영업일 기준 1~2일 내에 꼼꼼히 확인 후 연락드리겠습니다.
           </p>
           <div className="divider-gold mb-10" />
-          <button
-            onClick={() => setSubmitted(false)}
-            className="btn-outline px-10"
-          >
-            새로운 문의하기
-          </button>
+          {kakaoChannelId && (
+            <a
+              href={kakaoChatUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary px-10 inline-flex items-center justify-center gap-2 mb-4"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                <path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.724 1.8 5.113 4.508 6.463-.2.744-.723 2.694-.828 3.112-.13.518.19.51.4.372.164-.108 2.61-1.774 3.67-2.492.728.104 1.48.158 2.25.158 5.523 0 10-3.463 10-7.613C22 6.463 17.523 3 12 3z" />
+              </svg>
+              카카오톡으로 문의 이어가기
+            </a>
+          )}
+          <div>
+            <button
+              onClick={() => setSubmitted(false)}
+              className="btn-outline px-10"
+            >
+              새로운 문의하기
+            </button>
+          </div>
         </div>
       </section>
     );
@@ -166,7 +186,7 @@ export default function ContactForm({ settings }: { settings: SiteSettings }) {
                 <ContactLink
                   title="KAKAO CHANNEL"
                   value={settings.kakaoChannel}
-                  href="https://pf.kakao.com"
+                  href={kakaoChatUrl}
                   desc="실시간 채팅 상담"
                 />
               )}

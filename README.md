@@ -34,6 +34,9 @@ SUPABASE_SERVICE_ROLE_KEY=
 INSTAGRAM_ACCESS_TOKEN=
 INSTAGRAM_USER_ID=
 
+# 카카오 비즈니스 채널 (상담 채팅 링크용)
+NEXT_PUBLIC_KAKAO_CHANNEL_ID=    # 예: _Hxmdyxj (pf.kakao.com/{ID}/chat)
+
 # 카카오 알림톡 (Solapi, 선택)
 SOLAPI_API_KEY=
 SOLAPI_API_SECRET=
