@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { sendInquiryAlimtalk } from "@/lib/kakao-alimtalk";
+import {
+  sendInquiryAlimtalkToAdmin,
+  sendInquiryAlimtalkToCustomer,
+} from "@/lib/kakao-alimtalk";
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,30 +49,42 @@ export async function POST(request: NextRequest) {
       inquiryId = data.id;
     }
 
-    // 2) 카카오 알림톡 발송 (관리자 번호로)
+    // 2) 카카오 알림톡 발송 (고객 + 관리자 병렬)
+    const inquiryData = {
+      name,
+      phone,
+      email,
+      eventType,
+      eventDate,
+      location,
+      budget,
+      message,
+    };
     const adminPhone = process.env.ADMIN_PHONE || "";
-    let kakaoSent = false;
 
-    if (adminPhone) {
-      const result = await sendInquiryAlimtalk(
-        { name, phone, email, eventType, eventDate, location, budget, message },
-        adminPhone
-      );
-      kakaoSent = result.success;
+    const [customerResult, adminResult] = await Promise.all([
+      sendInquiryAlimtalkToCustomer(inquiryData),
+      adminPhone
+        ? sendInquiryAlimtalkToAdmin(inquiryData, adminPhone)
+        : Promise.resolve({ success: false, error: "ADMIN_PHONE 미설정" }),
+    ]);
 
-      // 알림톡 발송 결과 DB 업데이트
-      if (supabase && inquiryId) {
-        await supabase
-          .from("belluno_inquiries")
-          .update({ kakao_sent: kakaoSent })
-          .eq("id", inquiryId);
-      }
+    const kakaoSent = customerResult.success && adminResult.success;
+
+    if (supabase && inquiryId) {
+      await supabase
+        .from("belluno_inquiries")
+        .update({ kakao_sent: kakaoSent })
+        .eq("id", inquiryId);
     }
 
     return NextResponse.json({
       success: true,
       id: inquiryId,
-      kakaoSent,
+      kakao: {
+        customer: customerResult.success,
+        admin: adminResult.success,
+      },
     });
   } catch (error) {
     console.error("[상담신청] 처리 오류:", error);

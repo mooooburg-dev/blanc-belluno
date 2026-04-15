@@ -1,17 +1,21 @@
 /**
- * 카카오 알림톡 발송 유틸리티
+ * 카카오 알림톡 발송 유틸리티 (Solapi)
  *
  * 사전 준비:
- * 1. 카카오 비즈니스 채널 개설 (https://business.kakao.com)
- * 2. 알림톡 발송 프로필 등록
- * 3. 메시지 템플릿 심사 승인
- * 4. REST API 키 발급
+ * 1. Solapi 가입 (https://solapi.com) + API Key/Secret 발급
+ * 2. 카카오 비즈니스 채널 개설 (https://business.kakao.com) 후 Solapi와 연동 → 채널 ID(pfId) 발급
+ * 3. 알림톡 템플릿 2개(고객용/관리자용) 등록 및 심사 승인
  *
  * 환경변수:
- * - KAKAO_REST_API_KEY: 카카오 REST API 키
- * - KAKAO_ALIMTALK_SENDER_KEY: 발신 프로필 키
- * - KAKAO_ALIMTALK_TEMPLATE_CODE: 승인된 템플릿 코드
+ * - SOLAPI_API_KEY
+ * - SOLAPI_API_SECRET
+ * - SOLAPI_PFID                   (카카오 채널 ID)
+ * - SOLAPI_TEMPLATE_ID_CUSTOMER   (고객 접수 확인용)
+ * - SOLAPI_TEMPLATE_ID_ADMIN      (관리자 신규 상담 알림용)
+ * - ADMIN_PHONE                   (관리자 수신 번호)
  */
+
+import { SolapiMessageService } from "solapi";
 
 interface InquiryData {
   name: string;
@@ -29,84 +33,103 @@ interface AlimtalkResult {
   error?: string;
 }
 
-const KAKAO_API_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+const SENDER_PHONE = process.env.SOLAPI_SENDER_PHONE || "";
 
 function isConfigured(): boolean {
   return !!(
-    process.env.KAKAO_REST_API_KEY &&
-    process.env.KAKAO_ALIMTALK_SENDER_KEY &&
-    process.env.KAKAO_ALIMTALK_TEMPLATE_CODE
+    process.env.SOLAPI_API_KEY &&
+    process.env.SOLAPI_API_SECRET &&
+    process.env.SOLAPI_PFID
   );
 }
 
-/**
- * 관리자에게 카카오 알림톡 발송
- */
-export async function sendInquiryAlimtalk(
-  data: InquiryData,
-  adminPhone: string
+function getClient(): SolapiMessageService | null {
+  if (!isConfigured()) return null;
+  return new SolapiMessageService(
+    process.env.SOLAPI_API_KEY!,
+    process.env.SOLAPI_API_SECRET!
+  );
+}
+
+function normalizePhone(phone: string): string {
+  return phone.replace(/[^0-9]/g, "");
+}
+
+function truncate(text: string | undefined, max = 50, fallback = "없음"): string {
+  if (!text) return fallback;
+  return text.length > max ? text.slice(0, max) + "..." : text;
+}
+
+async function sendAlimtalk(
+  templateId: string,
+  to: string,
+  variables: Record<string, string>
 ): Promise<AlimtalkResult> {
-  if (!isConfigured()) {
-    console.log("[알림톡] 카카오 알림톡 미설정 - 발송 스킵");
-    return { success: false, error: "카카오 알림톡이 설정되지 않았습니다." };
+  const client = getClient();
+  if (!client) {
+    console.log("[알림톡] Solapi 미설정 - 발송 스킵");
+    return { success: false, error: "Solapi가 설정되지 않았습니다." };
   }
 
-  const senderKey = process.env.KAKAO_ALIMTALK_SENDER_KEY!;
-  const templateCode = process.env.KAKAO_ALIMTALK_TEMPLATE_CODE!;
-  const apiKey = process.env.KAKAO_REST_API_KEY!;
-
-  const templateArgs = {
-    name: data.name,
-    phone: data.phone,
-    event_type: data.eventType,
-    event_date: data.eventDate,
-    location: data.location || "미정",
-    budget: data.budget || "협의",
-    message: data.message
-      ? data.message.length > 50
-        ? data.message.slice(0, 50) + "..."
-        : data.message
-      : "없음",
-  };
-
   try {
-    const res = await fetch(
-      "https://kapi.kakao.com/v1/api/talk/friends/message/default/send",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `KakaoAK ${apiKey}`,
-        },
-        body: new URLSearchParams({
-          sender_key: senderKey,
-          template_code: templateCode,
-          receiver_number: adminPhone.replace(/-/g, ""),
-          template_object: JSON.stringify(templateArgs),
-        }),
-      }
-    );
-
-    if (!res.ok) {
-      const errorBody = await res.text();
-      console.error("[알림톡] 발송 실패:", res.status, errorBody);
-      return { success: false, error: `카카오 API 오류: ${res.status}` };
-    }
-
-    console.log("[알림톡] 발송 성공:", data.name);
+    await client.sendOne({
+      to: normalizePhone(to),
+      from: normalizePhone(SENDER_PHONE),
+      kakaoOptions: {
+        pfId: process.env.SOLAPI_PFID!,
+        templateId,
+        variables,
+      },
+    });
     return { success: true };
   } catch (error) {
-    console.error("[알림톡] 네트워크 오류:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "알 수 없는 오류",
-    };
+    const message = error instanceof Error ? error.message : "알 수 없는 오류";
+    console.error("[알림톡] 발송 실패:", message);
+    return { success: false, error: message };
   }
 }
 
 /**
- * 알림톡 설정 여부 확인용 (외부 노출)
+ * 고객에게 상담 접수 확인 알림톡 발송
  */
+export async function sendInquiryAlimtalkToCustomer(
+  data: InquiryData
+): Promise<AlimtalkResult> {
+  const templateId = process.env.SOLAPI_TEMPLATE_ID_CUSTOMER;
+  if (!templateId) {
+    return { success: false, error: "고객용 템플릿 ID 미설정" };
+  }
+
+  return sendAlimtalk(templateId, data.phone, {
+    "#{name}": data.name,
+    "#{event_type}": data.eventType,
+    "#{event_date}": data.eventDate,
+  });
+}
+
+/**
+ * 관리자에게 신규 상담 접수 알림톡 발송
+ */
+export async function sendInquiryAlimtalkToAdmin(
+  data: InquiryData,
+  adminPhone: string
+): Promise<AlimtalkResult> {
+  const templateId = process.env.SOLAPI_TEMPLATE_ID_ADMIN;
+  if (!templateId) {
+    return { success: false, error: "관리자용 템플릿 ID 미설정" };
+  }
+
+  return sendAlimtalk(templateId, adminPhone, {
+    "#{name}": data.name,
+    "#{phone}": data.phone,
+    "#{event_type}": data.eventType,
+    "#{event_date}": data.eventDate,
+    "#{location}": data.location || "미정",
+    "#{budget}": data.budget || "협의",
+    "#{message}": truncate(data.message),
+  });
+}
+
 export function isAlimtalkConfigured(): boolean {
   return isConfigured();
 }
