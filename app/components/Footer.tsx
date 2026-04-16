@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
-const ADMIN_PASSWORD = "998401";
-const ADMIN_AUTH_KEY = "blanc_belluno_admin_auth";
+const ADMIN_PASSWORD = '998401';
+const ADMIN_AUTH_KEY = 'blanc_belluno_admin_auth';
 
 interface SiteSettings {
   instagram: string;
@@ -24,22 +24,22 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
 
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleAdminClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (localStorage.getItem(ADMIN_AUTH_KEY) === "1") {
-      router.push("/admin");
+    if (localStorage.getItem(ADMIN_AUTH_KEY) === '1') {
+      router.push('/admin');
       return;
     }
-    const input = window.prompt("관리자 비밀번호를 입력하세요");
+    const input = window.prompt('관리자 비밀번호를 입력하세요');
     if (input === null) return;
     if (input === ADMIN_PASSWORD) {
-      localStorage.setItem(ADMIN_AUTH_KEY, "1");
-      router.push("/admin");
+      localStorage.setItem(ADMIN_AUTH_KEY, '1');
+      router.push('/admin');
     } else {
-      window.alert("비밀번호가 올바르지 않습니다.");
+      window.alert('비밀번호가 올바르지 않습니다.');
     }
   };
 
@@ -49,7 +49,10 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-14">
           {/* Brand Info */}
           <div className="md:col-span-5">
-            <Link href="#home" className="inline-flex items-center gap-3 mb-5 group">
+            <Link
+              href="#home"
+              className="inline-flex items-center gap-3 mb-5 group"
+            >
               <Image
                 src="/blanc_belluno_logo.jpg"
                 alt="Blanc Belluno"
@@ -89,7 +92,10 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
                 </SocialLink>
               )}
               {settings.naverSmartStore && (
-                <SocialLink href={settings.naverSmartStore} label="Naver SmartStore">
+                <SocialLink
+                  href={settings.naverSmartStore}
+                  label="Naver SmartStore"
+                >
                   NS
                 </SocialLink>
               )}
@@ -103,10 +109,10 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
             </h4>
             <ul className="flex flex-col gap-3">
               {[
-                { label: "Home", href: "#home" },
-                { label: "Portfolio", href: "#gallery" },
-                { label: "Services", href: "#services" },
-                { label: "Inquiry", href: "#contact" },
+                { label: 'Home', href: '#home' },
+                { label: 'Portfolio', href: '#gallery' },
+                { label: 'Services', href: '#services' },
+                { label: 'Inquiry', href: '#contact' },
               ].map((link) => (
                 <li key={link.label}>
                   <button
@@ -211,13 +217,7 @@ function SocialLink({
   );
 }
 
-function FooterContactItem({
-  title,
-  value,
-}: {
-  title: string;
-  value: string;
-}) {
+function FooterContactItem({ title, value }: { title: string; value: string }) {
   return (
     <li>
       <p className="font-body text-[9px] uppercase tracking-[0.2em] text-blanc-champagne/35 mb-1">
