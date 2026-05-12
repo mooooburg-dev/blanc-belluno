@@ -60,6 +60,10 @@ export default function Header() {
     const href = pendingScrollHref.current;
     if (!href) return;
     pendingScrollHref.current = null;
+    if (href === "#home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   }, [menuOpen]);
 
@@ -80,6 +84,10 @@ export default function Header() {
     if (menuOpen) {
       pendingScrollHref.current = href;
       setMenuOpen(false);
+      return;
+    }
+    if (href === "#home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
