@@ -24,7 +24,8 @@ export async function getInstagramFeed(
     const fields = "id,caption,media_url,thumbnail_url,permalink,media_type,timestamp";
     const url = `${INSTAGRAM_GRAPH_API}/me/media?fields=${fields}&limit=${count}&access_token=${accessToken}`;
 
-    const res = await fetch(url, { next: { revalidate: 3600 } });
+    // Instagram CDN URL은 짧은 수명의 signed URL이라 캐시를 길게 잡으면 403이 자주 발생함
+    const res = await fetch(url, { next: { revalidate: 300 } });
 
     if (!res.ok) {
       const error = await res.json().catch(() => ({}));
