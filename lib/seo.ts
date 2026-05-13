@@ -7,7 +7,7 @@ export const NAVER_SITE_VERIFICATION = "ab0ab7b208933cec2fe498e9e7f57f8e07dd27c8
 export const SITE_NAME = "Blanc Belluno";
 export const SITE_NAME_KO = "블랑벨루노";
 
-export const DEFAULT_TITLE = `${SITE_NAME} | ${SITE_NAME_KO} — 김포·서울·인천 풍선 장식 & 돌잔치 포토존 전문`;
+export const DEFAULT_TITLE = `${SITE_NAME_KO} | ${SITE_NAME} — 김포·서울·인천 풍선 장식 & 돌잔치 포토존 전문`;
 
 export const DEFAULT_DESCRIPTION =
   "김포, 서울, 인천, 송도, 부천 지역 출장 풍선 장식 전문 블랑벨루노. 돌잔치 포토존, 소규모 돌잔치, 프러포즈 장식, 베이비샤워, 생일파티, 기업 이벤트까지 맞춤 풍선 아치·가랜드·데코레이션을 연출합니다.";

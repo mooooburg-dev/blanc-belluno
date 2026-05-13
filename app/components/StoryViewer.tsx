@@ -335,7 +335,7 @@ export default function StoryViewer({
           <div className="flex items-center gap-2.5 pb-2">
             <Image
               src="/blanc_belluno_logo.jpg"
-              alt="Blanc Belluno"
+              alt="블랑벨루노"
               width={32}
               height={32}
               className="rounded-full"

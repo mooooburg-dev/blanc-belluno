@@ -91,8 +91,8 @@ export default function AdminPage() {
         <div className="max-w-[1400px] mx-auto px-6">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-semibold tracking-wide text-stone-900 uppercase">
-                Blanc Belluno
+              <h1 className="text-sm font-semibold tracking-wide text-stone-900">
+                블랑벨루노
               </h1>
               <span className="text-[10px] font-medium text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded">
                 Admin

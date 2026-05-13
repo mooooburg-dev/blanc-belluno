@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "포트폴리오 관리 | Blanc Belluno Admin",
+  title: "포트폴리오 관리 | 블랑벨루노 Admin",
   description: "블랑벨루노 포트폴리오 관리 페이지",
 };
 
