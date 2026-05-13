@@ -21,8 +21,12 @@ export default function FloatingContact({
   }, []);
 
   const telHref = phone ? `tel:${phone.replace(/[^0-9+]/g, "")}` : null;
-  const kakaoHandle = kakaoChannel?.replace(/^@/, "");
-  const kakaoHref = kakaoHandle ? `https://pf.kakao.com/${kakaoHandle}` : null;
+  const kakaoChannelId =
+    process.env.NEXT_PUBLIC_KAKAO_CHANNEL_ID?.replace(/^@/, "") ||
+    kakaoChannel?.replace(/^@/, "");
+  const kakaoHref = kakaoChannelId
+    ? `https://pf.kakao.com/${kakaoChannelId}/chat`
+    : null;
 
   if (!telHref && !kakaoHref) return null;
 
