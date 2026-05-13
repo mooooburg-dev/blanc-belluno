@@ -24,6 +24,7 @@
   --color-foreground: var(--foreground);
   --font-display: var(--font-cormorant);
   --font-body: var(--font-noto);
+  --font-logo: var(--font-playfair);
 
   /* Mapping tokens */
   --color-blanc-base: #FCFBF9;
@@ -54,6 +55,11 @@ body {
 /* Display font overrides */
 .font-display {
   font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+}
+
+/* Logo font — Playfair Display */
+.font-logo {
+  font-family: var(--font-playfair), "Playfair Display", "Cormorant Garamond", Georgia, serif;
 }
 
 /* Sophisticated line divider */

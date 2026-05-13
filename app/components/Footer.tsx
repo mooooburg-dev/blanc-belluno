@@ -65,17 +65,14 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
             >
               <Image
                 src="/blanc_belluno_logo.jpg"
-                alt="Blanc Belluno"
+                alt="블랑벨루노"
                 width={48}
                 height={48}
                 className="rounded-full"
               />
-              <div>
-                <p className="font-display text-2xl font-light tracking-[0.25em] text-white leading-none group-hover:text-blanc-champagne transition-colors">
-                  BLANC
-                </p>
-                <p className="font-display text-[9px] tracking-[0.4em] text-blanc-gold mt-1 pl-0.5">
-                  BELLUNO
+              <div className="flex items-center">
+                <p className="font-body text-xl font-medium tracking-[0.05em] leading-none text-white group-hover:text-blanc-champagne transition-colors">
+                  블랑벨루노
                 </p>
               </div>
             </Link>
@@ -174,7 +171,7 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
         <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
           <div className="flex items-center gap-3">
             <p className="font-body text-[10px] uppercase tracking-widest text-blanc-champagne/35">
-              &copy; {currentYear} Blanc Belluno. All rights reserved.
+              &copy; {currentYear} 블랑벨루노 (Blanc Belluno). All rights reserved.
             </p>
             <button
               type="button"

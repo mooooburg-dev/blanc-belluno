@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Noto_Sans_KR } from "next/font/google";
+import { Cormorant_Garamond, Noto_Sans_KR, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import {
   DEFAULT_DESCRIPTION,
@@ -23,6 +23,13 @@ const notoSansKR = Noto_Sans_KR({
   variable: "--font-noto",
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -97,7 +104,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className="scroll-smooth">
       <body
-        className={`${cormorant.variable} ${notoSansKR.variable} antialiased`}
+        className={`${cormorant.variable} ${notoSansKR.variable} ${playfair.variable} antialiased`}
       >
         {children}
       </body>

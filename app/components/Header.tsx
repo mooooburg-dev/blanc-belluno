@@ -135,7 +135,7 @@ export default function Header() {
           >
             <Image
               src="/blanc_belluno_logo.jpg"
-              alt="Blanc Belluno"
+              alt="블랑벨루노"
               width={44}
               height={44}
               className="rounded-full md:w-11 md:h-11 w-9 h-9 relative z-1"
@@ -144,13 +144,10 @@ export default function Header() {
           <Link
             href="#home"
             onClick={() => handleNavClick("#home")}
-            className="flex flex-col items-center justify-center ml-2.5"
+            className="flex items-center justify-center ml-2.5"
           >
-            <span className="font-display text-lg md:text-xl font-light tracking-[0.15em] text-blanc-text-primary group-hover:text-blanc-text-secondary transition-colors leading-none">
-              BLANC
-            </span>
-            <span className="font-display text-[7px] md:text-[8px] tracking-[0.4em] text-blanc-gold font-light mt-0.5">
-              BELLUNO
+            <span className="font-body text-base md:text-lg font-medium tracking-[0.05em] leading-none text-blanc-text-secondary group-hover:text-blanc-text-primary transition-colors">
+              블랑벨루노
             </span>
           </Link>
         </div>
