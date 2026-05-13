@@ -119,10 +119,10 @@ export default async function ServiceCategoryPage({
               <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-4">
                 What we offer
               </span>
-              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-light text-blanc-text-primary tracking-tight">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-light text-blanc-text-primary tracking-tight mb-6">
                 제공 서비스
               </h2>
-              <div className="divider-gold mt-5" />
+              <div className="divider-gold" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
               {category.highlights.map((h, i) => (
@@ -152,13 +152,13 @@ export default async function ServiceCategoryPage({
               <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-4">
                 Portfolio
               </span>
-              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-light text-blanc-text-primary tracking-tight">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-light text-blanc-text-primary tracking-tight mb-6">
                 {category.label}{" "}
                 <span className="text-blanc-text-secondary">
                   작품 사례
                 </span>
               </h2>
-              <div className="divider-gold mt-5" />
+              <div className="divider-gold" />
             </div>
 
             {items.length === 0 ? (
