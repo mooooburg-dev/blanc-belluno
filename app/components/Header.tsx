@@ -14,11 +14,11 @@ interface Story {
 }
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Services", href: "#services" },
-  { label: "Portfolio", href: "#gallery" },
-  { label: "Instagram", href: "#instagram" },
-  { label: "Contact", href: "#contact" },
+  { label: "홈", href: "#home" },
+  { label: "서비스", href: "#services" },
+  { label: "진행방식", href: "#process" },
+  { label: "포트폴리오", href: "#gallery" },
+  { label: "인스타그램", href: "#instagram" },
 ];
 
 export default function Header() {
@@ -158,16 +158,16 @@ export default function Header() {
             <button
               key={link.label}
               onClick={() => handleNavClick(link.href)}
-              className="font-body text-[11px] tracking-[0.12em] text-blanc-text-secondary hover:text-blanc-text-primary transition-colors cursor-pointer uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-blanc-gold after:origin-right after:scale-x-0 hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-300"
+              className="font-body text-[13px] tracking-[0.05em] text-blanc-text-secondary hover:text-blanc-text-primary transition-colors cursor-pointer relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-blanc-gold after:origin-right after:scale-x-0 hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-300"
             >
               {link.label}
             </button>
           ))}
           <button
             onClick={() => handleNavClick("#contact")}
-            className="font-body text-[11px] tracking-[0.12em] text-white bg-blanc-text-primary hover:bg-black px-5 py-2 transition-colors uppercase"
+            className="font-body text-[12px] tracking-[0.05em] text-white bg-blanc-text-primary hover:bg-black px-5 py-2 transition-colors"
           >
-            Inquire
+            상담 신청
           </button>
         </nav>
 
@@ -175,9 +175,9 @@ export default function Header() {
         <div className="md:hidden flex items-center gap-3">
           <button
             onClick={() => handleNavClick("#contact")}
-            className="font-body text-[10px] tracking-[0.12em] text-white bg-blanc-text-primary hover:bg-black px-3.5 py-2 transition-colors uppercase"
+            className="font-body text-[11px] tracking-[0.05em] text-white bg-blanc-text-primary hover:bg-black px-3.5 py-2 transition-colors"
           >
-            상담하기
+            상담 신청
           </button>
           <button
             className="relative z-10 flex h-8 w-8 cursor-pointer flex-col items-center justify-center"
@@ -223,16 +223,16 @@ export default function Header() {
           <button
             key={link.label}
             onClick={() => handleNavClick(link.href)}
-            className="font-body text-sm tracking-[0.2em] text-blanc-text-secondary hover:text-blanc-text-primary transition-colors uppercase py-3 min-w-[120px] text-center"
+            className="font-body text-base tracking-[0.05em] text-blanc-text-secondary hover:text-blanc-text-primary transition-colors py-3 min-w-[120px] text-center"
           >
             {link.label}
           </button>
         ))}
         <button
           onClick={() => handleNavClick("#contact")}
-          className="font-body text-xs tracking-[0.15em] text-white bg-blanc-text-primary px-10 py-4 uppercase"
+          className="font-body text-sm tracking-[0.05em] text-white bg-blanc-text-primary px-10 py-4"
         >
-          Inquire
+          상담 신청
         </button>
       </nav>
     </div>

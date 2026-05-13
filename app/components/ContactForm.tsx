@@ -159,7 +159,7 @@ export default function ContactForm({ settings }: { settings: SiteSettings }) {
         {/* Section Header */}
         <div className="text-center mb-10 md:mb-12">
           <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-4">
-            Inquiry
+            상담 신청
           </span>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary tracking-tight mb-5">
             상담{" "}
@@ -352,7 +352,7 @@ export default function ContactForm({ settings }: { settings: SiteSettings }) {
                     disabled={loading}
                     className="btn-primary w-full sm:w-auto px-10 disabled:opacity-70"
                   >
-                    {loading ? "SUBMITTING..." : "SUBMIT INQUIRY"}
+                    {loading ? "전송 중..." : "상담 신청하기"}
                   </button>
                 </div>
               </form>
