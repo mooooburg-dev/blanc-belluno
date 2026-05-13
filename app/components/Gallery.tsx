@@ -19,6 +19,8 @@ interface PortfolioItem {
 }
 
 const CATEGORIES = ["ALL", "WEDDING", "BABY SHOWER", "PARTY", "CORPORATE"];
+const INITIAL_VISIBLE = 16;
+const LOAD_MORE_STEP = 16;
 
 const placeholderItems = [
   {
@@ -68,6 +70,7 @@ const placeholderItems = [
 export default function Gallery({ items }: { items: PortfolioItem[] }) {
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
   const hasRealItems = items.length > 0;
 
@@ -109,7 +112,10 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
           {displayCategories.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveCategory(cat)}
+              onClick={() => {
+                setActiveCategory(cat);
+                setVisibleCount(INITIAL_VISIBLE);
+              }}
               className={`font-body text-[11px] tracking-[0.15em] uppercase transition-all duration-300 pb-2 border-b ${
                 activeCategory === cat
                   ? "text-blanc-text-primary border-blanc-text-primary"
@@ -145,7 +151,7 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
         {/* Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
           {hasRealItems
-            ? filteredReal.map((item, idx) => (
+            ? filteredReal.slice(0, visibleCount).map((item, idx) => (
                 <button
                   key={item.id}
                   type="button"
@@ -207,6 +213,26 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
               ))}
         </div>
 
+        {/* Load more */}
+        {hasRealItems && filteredReal.length > visibleCount && (
+          <div className="mt-10 md:mt-12 flex justify-center">
+            <button
+              type="button"
+              onClick={() =>
+                setVisibleCount((v) =>
+                  Math.min(v + LOAD_MORE_STEP, filteredReal.length)
+                )
+              }
+              className="group font-body text-[11px] tracking-[0.25em] uppercase text-blanc-text-secondary hover:text-blanc-text-primary border border-blanc-champagne hover:border-blanc-text-primary px-8 py-3 transition-colors inline-flex items-center gap-3"
+            >
+              더 보기
+              <span className="text-blanc-text-muted group-hover:text-blanc-text-primary transition-colors">
+                +{filteredReal.length - visibleCount}
+              </span>
+            </button>
+          </div>
+        )}
+
         {/* Notice */}
         {!hasRealItems && (
           <div className="mt-16 text-center">
@@ -221,7 +247,7 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
 
       {hasRealItems && lightboxIndex !== null && (
         <PortfolioLightbox
-          items={filteredReal}
+          items={filteredReal.slice(0, visibleCount)}
           startIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
         />
