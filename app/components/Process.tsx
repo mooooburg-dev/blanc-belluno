@@ -163,32 +163,31 @@ export default function Process() {
                 key={item.step}
                 className={`${mobileLayout} lg:col-span-1 lg:col-start-auto relative flex flex-col items-center text-center`}
               >
-                {/* Connector line (lg+ only) */}
-                {index < steps.length - 1 && (
-                  <span
-                    aria-hidden
-                    className="hidden lg:block absolute top-12 left-[calc(50%+3.5rem)] right-[calc(-50%+3.5rem)] h-px"
-                    style={{
-                      backgroundImage:
-                        'linear-gradient(to right, var(--color-sand) 50%, transparent 0%)',
-                      backgroundSize: '8px 1px',
-                      backgroundRepeat: 'repeat-x',
-                    }}
-                  />
-                )}
-
                 {/* Step number */}
                 <span className="font-display text-[9px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.35em] uppercase text-blanc-gold mb-2 sm:mb-3 lg:mb-4">
                   Step {item.step}
                 </span>
 
                 {/* Icon circle */}
-                <div className="relative mb-3 sm:mb-4 lg:mb-6">
+                <div className="relative mb-3 sm:mb-4 lg:mb-6 w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28">
+                  {/* Connector line (lg+ only) — anchored to the circle's vertical center */}
+                  {index < steps.length - 1 && (
+                    <span
+                      aria-hidden
+                      className="hidden lg:block absolute top-1/2 -translate-y-1/2 left-full w-[calc(100%+3.5rem)] h-px z-0"
+                      style={{
+                        backgroundImage:
+                          'linear-gradient(to right, var(--color-sand) 50%, transparent 0%)',
+                        backgroundSize: '8px 1px',
+                        backgroundRepeat: 'repeat-x',
+                      }}
+                    />
+                  )}
                   <div
                     aria-hidden
                     className="absolute inset-0 rounded-full bg-blanc-rose/30 blur-xl scale-110"
                   />
-                  <div className="relative w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full bg-blanc-surface border border-blanc-champagne/70 shadow-[0_8px_30px_rgba(197,168,128,0.12)] flex items-center justify-center text-blanc-gold transition-transform duration-500 hover:-translate-y-1 [&_svg]:w-5 [&_svg]:h-5 sm:[&_svg]:w-6 sm:[&_svg]:h-6 md:[&_svg]:w-7 md:[&_svg]:h-7 lg:[&_svg]:w-8 lg:[&_svg]:h-8">
+                  <div className="relative w-full h-full rounded-full bg-blanc-surface border border-blanc-champagne/70 shadow-[0_8px_30px_rgba(197,168,128,0.12)] flex items-center justify-center text-blanc-gold transition-transform duration-500 hover:-translate-y-1 [&_svg]:w-5 [&_svg]:h-5 sm:[&_svg]:w-6 sm:[&_svg]:h-6 md:[&_svg]:w-7 md:[&_svg]:h-7 lg:[&_svg]:w-8 lg:[&_svg]:h-8">
                     {item.icon}
                   </div>
                 </div>
