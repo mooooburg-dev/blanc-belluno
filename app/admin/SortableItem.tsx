@@ -4,9 +4,7 @@ import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
-
-const CATEGORIES = ["WEDDING", "BABY SHOWER", "PARTY", "CORPORATE"] as const;
-type Category = (typeof CATEGORIES)[number];
+import { CATEGORIES, type Category } from "@/lib/portfolio";
 
 interface PortfolioItem {
   id: string;

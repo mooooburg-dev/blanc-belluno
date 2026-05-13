@@ -21,9 +21,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import SortableItem from "./SortableItem";
-
-const CATEGORIES = ["WEDDING", "BABY SHOWER", "PARTY", "CORPORATE"] as const;
-type Category = (typeof CATEGORIES)[number];
+import { CATEGORIES, type Category } from "@/lib/portfolio";
 
 interface PortfolioItem {
   id: string;

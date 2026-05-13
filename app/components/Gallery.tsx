@@ -18,9 +18,23 @@ interface PortfolioItem {
   imageUrl: string;
 }
 
-const CATEGORIES = ["ALL", "WEDDING", "BABY SHOWER", "PARTY", "CORPORATE"];
 const INITIAL_VISIBLE = 16;
 const LOAD_MORE_STEP = 16;
+
+// 카테고리 → 한글 라벨 매핑 (service-categories의 subtitle 사용)
+const CATEGORY_LABELS: Record<string, string> = Object.fromEntries(
+  serviceCategories.map((s) => [s.category, s.subtitle])
+);
+
+function categoryLabel(cat: string) {
+  if (cat === "ALL") return "전체";
+  return CATEGORY_LABELS[cat] ?? cat;
+}
+
+const DEFAULT_CATEGORIES = [
+  "ALL",
+  ...serviceCategories.map((s) => s.category),
+];
 
 const placeholderItems = [
   {
@@ -39,9 +53,9 @@ const placeholderItems = [
   },
   {
     id: "p3",
-    category: "BABY SHOWER",
-    title: "Sky Blue Whisper",
-    tag: "Gender Reveal",
+    category: "ARCH",
+    title: "Pastel Arch",
+    tag: "Balloon Arch",
     gradient: "from-[#e8eef5] via-[#e3e9f0] to-[#dde5ed]",
   },
   {
@@ -53,9 +67,9 @@ const placeholderItems = [
   },
   {
     id: "p5",
-    category: "WEDDING",
+    category: "DOL",
     title: "Classic Pearl",
-    tag: "Photo Zone",
+    tag: "First Birthday",
     gradient: "from-[#f5f0ea] via-[#f0e8e0] to-[#ebe3d8]",
   },
   {
@@ -74,13 +88,15 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
 
   const hasRealItems = items.length > 0;
 
-  // 실제 데이터가 있으면 사용, 없으면 placeholder
+  // 실제 데이터가 있으면 사용, 없으면 기본 9개 카테고리 노출
   const displayCategories = hasRealItems
     ? [
         "ALL",
-        ...Array.from(new Set(items.map((i) => i.category))),
+        ...serviceCategories
+          .map((s) => s.category)
+          .filter((cat) => items.some((i) => i.category === cat)),
       ]
-    : CATEGORIES;
+    : DEFAULT_CATEGORIES;
 
   const filteredReal =
     activeCategory === "ALL"
@@ -107,8 +123,8 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
           <div className="divider-gold" />
         </div>
 
-        {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-5">
+        {/* Filter — 카테고리가 많아 두 줄로 자연스럽게 wrap */}
+        <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 sm:gap-x-4 md:gap-x-5 mb-5 max-w-3xl mx-auto">
           {displayCategories.map((cat) => (
             <button
               key={cat}
@@ -116,13 +132,13 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
                 setActiveCategory(cat);
                 setVisibleCount(INITIAL_VISIBLE);
               }}
-              className={`font-body text-[11px] tracking-[0.15em] uppercase transition-all duration-300 pb-2 border-b ${
+              className={`font-body text-[11px] sm:text-xs tracking-[0.1em] transition-all duration-300 pb-1.5 border-b ${
                 activeCategory === cat
                   ? "text-blanc-text-primary border-blanc-text-primary"
                   : "text-blanc-text-muted border-transparent hover:text-blanc-text-secondary hover:border-blanc-champagne"
               }`}
             >
-              {cat}
+              {categoryLabel(cat)}
             </button>
           ))}
         </div>

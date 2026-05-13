@@ -29,7 +29,7 @@ export default function Services() {
         </div>
 
         {/* Service Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
           {serviceCategories.map((service) => (
             <ServiceCard key={service.slug} service={service} />
           ))}
@@ -62,47 +62,25 @@ function ServiceCard({ service }: { service: ServiceCategory }) {
   return (
     <Link
       href={`/services/${service.slug}`}
-      className={`group relative overflow-hidden p-5 sm:p-7 lg:p-8 transition-all duration-500 hover:-translate-y-1 border border-blanc-champagne/40 block ${service.color}`}
+      className={`group relative overflow-hidden p-3.5 sm:p-5 lg:p-6 transition-all duration-500 hover:-translate-y-1 border border-blanc-champagne/40 block ${service.color}`}
     >
       {/* Decorative Background Accent */}
       <div
-        className={`absolute top-0 right-0 w-24 h-24 sm:w-28 sm:h-28 rounded-bl-full ${service.accent} opacity-40 transform translate-x-12 -translate-y-12 group-hover:translate-x-6 group-hover:-translate-y-6 transition-transform duration-700 ease-out`}
+        className={`absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 rounded-bl-full ${service.accent} opacity-40 transform translate-x-8 -translate-y-8 sm:translate-x-10 sm:-translate-y-10 group-hover:translate-x-4 group-hover:-translate-y-4 sm:group-hover:translate-x-5 sm:group-hover:-translate-y-5 transition-transform duration-700 ease-out`}
       />
 
-      <div className="relative z-10 flex flex-col h-full">
+      <div className="relative z-10 flex flex-col">
         {/* Category & Title */}
-        <div className="mb-5 sm:mb-6 lg:mb-8">
-          <span className="font-display text-[9px] sm:text-[10px] tracking-[0.25em] sm:tracking-[0.3em] uppercase text-blanc-gold block mb-2 sm:mb-3">
-            {service.label}
-          </span>
-          <h3 className="font-display text-base sm:text-lg lg:text-xl xl:text-2xl font-light text-blanc-text-primary tracking-wide mb-1.5 sm:mb-2">
-            {service.title}
-          </h3>
-          <p className="font-body text-[11px] sm:text-xs text-blanc-text-muted tracking-widest">
-            — {service.subtitle}
-          </p>
-        </div>
-
-        {/* Description */}
-        <p className="font-body text-xs sm:text-sm leading-relaxed sm:leading-loose text-blanc-text-secondary font-light grow mb-5 sm:mb-6 lg:mb-8">
-          {service.description}
-        </p>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-x-3 sm:gap-x-5 gap-y-2 mb-5 sm:mb-6">
-          {service.tags.map((tag) => (
-            <span
-              key={tag}
-              className="font-body text-[10px] sm:text-[11px] tracking-wider sm:tracking-widest text-blanc-text-muted uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-blanc-champagne"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+        <span className="font-display text-[9px] sm:text-[10px] tracking-[0.25em] sm:tracking-[0.3em] uppercase text-blanc-gold block mb-1 sm:mb-2">
+          {service.label}
+        </span>
+        <h3 className="font-display text-[15px] sm:text-lg lg:text-xl font-light text-blanc-text-primary tracking-wide leading-snug mb-3 sm:mb-5">
+          {service.subtitle}
+        </h3>
 
         {/* View More */}
-        <span className="font-body text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-blanc-text-primary inline-flex items-center gap-2 mt-auto">
-          자세히 보기
+        <span className="font-body text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-blanc-text-secondary inline-flex items-center gap-1.5 group-hover:text-blanc-text-primary transition-colors">
+          자세히
           <span className="inline-block transform transition-transform group-hover:translate-x-1">
             →
           </span>
