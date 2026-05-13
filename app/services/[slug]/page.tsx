@@ -12,7 +12,7 @@ import {
 import { getPortfolioItems } from "@/lib/portfolio";
 import { getSettings } from "@/lib/settings";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export function generateStaticParams() {
   return serviceCategories.map((c) => ({ slug: c.slug }));

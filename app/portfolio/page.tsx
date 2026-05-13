@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getPortfolioItems } from "@/lib/portfolio";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "포트폴리오 — 풍선 장식 작품 갤러리",
