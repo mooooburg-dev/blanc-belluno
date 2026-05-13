@@ -28,7 +28,7 @@ export default function FloatingContact({
 
   return (
     <div
-      className={`fixed right-4 sm:right-6 bottom-6 sm:bottom-8 z-50 flex flex-col items-end gap-3 transition-all duration-500 ${
+      className={`fixed right-4 sm:right-6 bottom-6 sm:bottom-8 z-50 flex flex-col items-center gap-3 transition-all duration-500 ${
         visible
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 translate-y-4 pointer-events-none"
