@@ -1,8 +1,10 @@
 import Header from "./components/Header";
 import Services from "./components/Services";
+import Process from "./components/Process";
 import Gallery from "./components/Gallery";
 import InstagramFeed from "./components/InstagramFeed";
 import ContactForm from "./components/ContactForm";
+import FloatingContact from "./components/FloatingContact";
 import Footer from "./components/Footer";
 import JsonLd from "./components/JsonLd";
 import { getPortfolioItems } from "@/lib/portfolio";
@@ -24,11 +26,13 @@ export default async function Home() {
       <Header />
       <main className="pt-20 md:pt-24">
         <Services />
+        <Process />
         <Gallery items={portfolioItems} />
         <InstagramFeed settings={settings} />
         <ContactForm settings={settings} />
       </main>
       <Footer settings={settings} />
+      <FloatingContact phone={settings.phone} kakaoChannel={settings.kakaoChannel} />
     </>
   );
 }
