@@ -1,45 +1,45 @@
-"use client";
+'use client';
 
 const services = [
   {
-    category: "Party",
-    title: "BIRTHDAY PARTY",
-    subtitle: "생일파티",
+    category: 'Party',
+    title: 'BIRTHDAY PARTY',
+    subtitle: '생일파티',
     description:
-      "아이부터 어른까지, 생애 가장 특별한 날을 완성하는 프라이빗 풍선 아치와 가랜드 연출.",
-    tags: ["키즈 파티", "어른 생일", "서프라이즈"],
-    color: "bg-blanc-blush-light",
-    accent: "bg-blanc-blush",
+      '아이부터 어른까지, 생애 가장 특별한 날을 완성하는 프라이빗 풍선 아치와 가랜드 연출.',
+    tags: ['키즈 파티', '어른 생일', '서프라이즈'],
+    color: 'bg-blanc-blush-light',
+    accent: 'bg-blanc-blush',
   },
   {
-    category: "Wedding",
-    title: "WEDDING & DOL",
-    subtitle: "웨딩 & 돌잔치",
+    category: 'Wedding',
+    title: 'WEDDING & DOL',
+    subtitle: '웨딩 & 돌잔치',
     description:
-      "인생의 가장 아름다운 순간을 위한 하이엔드 풍선 장식. 포토존부터 메인 무대까지 섬세한 터치.",
-    tags: ["웨딩홀", "포토존", "돌상 세팅"],
-    color: "bg-blanc-champagne/20",
-    accent: "bg-blanc-champagne",
+      '인생의 가장 아름다운 순간을 위한 하이엔드 풍선 장식. 포토존부터 메인 무대까지 섬세한 터치.',
+    tags: ['웨딩홀', '포토존', '돌상 세팅'],
+    color: 'bg-blanc-champagne/20',
+    accent: 'bg-blanc-champagne',
   },
   {
-    category: "Baby",
-    title: "BABY SHOWER",
-    subtitle: "베이비샤워",
+    category: 'Baby',
+    title: 'BABY SHOWER',
+    subtitle: '베이비샤워',
     description:
-      "새 생명의 탄생을 축복하는 우아한 파스텔 무드. 젠더 리빌 파티를 위한 특별한 셋업.",
-    tags: ["젠더 리빌", "임신 축하", "신생아 파티"],
-    color: "bg-blanc-base",
-    accent: "bg-blanc-sand/30",
+      '새 생명의 탄생을 축복하는 우아한 파스텔 무드. 젠더 리빌 파티를 위한 특별한 셋업.',
+    tags: ['젠더 리빌', '임신 축하', '신생아 파티'],
+    color: 'bg-blanc-base',
+    accent: 'bg-blanc-sand/30',
   },
   {
-    category: "Corporate",
-    title: "CORPORATE EVENTS",
-    subtitle: "기업 & 행사",
+    category: 'Corporate',
+    title: 'CORPORATE EVENTS',
+    subtitle: '기업 & 행사',
     description:
-      "브랜드 아이덴티티를 돋보이게 하는 프로페셔널 공간 연출. 론칭 쇼, 팝업스토어, VIP 행사.",
-    tags: ["론칭 파티", "팝업스토어", "사내 행사"],
-    color: "bg-white",
-    accent: "bg-blanc-gold/10",
+      '브랜드 아이덴티티를 돋보이게 하는 프로페셔널 공간 연출. 론칭 쇼, 팝업스토어, VIP 행사.',
+    tags: ['론칭 파티', '팝업스토어', '사내 행사'],
+    color: 'bg-white',
+    accent: 'bg-blanc-gold/10',
   },
 ];
 
@@ -53,13 +53,15 @@ export default function Services() {
             Our Expertise
           </span>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary mb-6 tracking-tight">
-            어떤 날이든, <span className="italic text-blanc-text-secondary">특별하게</span>
+            어떤 날이든,{' '}
+            <span className="italic text-blanc-text-secondary">특별하게</span>
           </h2>
           <div className="divider-gold" />
-          <p className="font-body text-sm md:text-base mt-8 max-w-xl mx-auto leading-relaxed text-blanc-text-secondary font-light">
+          <p className="font-body text-sm md:text-base mt-8 mx-auto leading-relaxed text-blanc-text-secondary font-light">
             블랑벨루노는 모든 순간을 소중히 여깁니다.
             <br className="hidden sm:block" />
-            작은 홈파티부터 대규모 브랜드 행사까지, 고객의 상상을 우아한 현실로 만들어드립니다.
+            작은 홈파티부터 대규모 브랜드 행사까지, 고객의 상상을 우아한 현실로
+            만들어드립니다.
           </p>
         </div>
 
@@ -77,8 +79,8 @@ export default function Services() {
           </p>
           <button
             onClick={() => {
-              const el = document.querySelector("#contact");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
+              const el = document.querySelector('#contact');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
             className="btn-outline group"
           >
