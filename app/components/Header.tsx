@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import StoryViewer from "./StoryViewer";
 
 interface Story {
@@ -27,6 +28,9 @@ export default function Header() {
   const [storyOpen, setStoryOpen] = useState(false);
   const [hasStories, setHasStories] = useState(false);
   const pendingScrollHref = useRef<string | null>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -60,12 +64,16 @@ export default function Header() {
     const href = pendingScrollHref.current;
     if (!href) return;
     pendingScrollHref.current = null;
+    if (!isHome) {
+      router.push(href === "#home" ? "/" : `/${href}`);
+      return;
+    }
     if (href === "#home") {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-  }, [menuOpen]);
+  }, [menuOpen, isHome, router]);
 
   // 스토리 데이터 로드
   useEffect(() => {
@@ -84,6 +92,10 @@ export default function Header() {
     if (menuOpen) {
       pendingScrollHref.current = href;
       setMenuOpen(false);
+      return;
+    }
+    if (!isHome) {
+      router.push(href === "#home" ? "/" : `/${href}`);
       return;
     }
     if (href === "#home") {

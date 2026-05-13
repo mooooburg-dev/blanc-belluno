@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const ADMIN_PASSWORD = '998401';
 const ADMIN_AUTH_KEY = 'blanc_belluno_admin_auth';
@@ -21,8 +21,18 @@ interface SiteSettings {
 export default function Footer({ settings }: { settings: SiteSettings }) {
   const currentYear = new Date().getFullYear();
   const router = useRouter();
+  const pathname = usePathname();
+  const isHome = pathname === '/';
 
   const scrollTo = (href: string) => {
+    if (!isHome) {
+      router.push(href === '#home' ? '/' : `/${href}`);
+      return;
+    }
+    if (href === '#home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
@@ -50,7 +60,7 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
           {/* Brand Info */}
           <div className="md:col-span-5">
             <Link
-              href="#home"
+              href={isHome ? '#home' : '/'}
               className="inline-flex items-center gap-3 mb-5 group"
             >
               <Image
