@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { serviceCategories } from "@/lib/service-categories";
+import PortfolioLightbox from "./PortfolioLightbox";
 
 interface PortfolioItem {
   id: string;
@@ -66,6 +67,7 @@ const placeholderItems = [
 
 export default function Gallery({ items }: { items: PortfolioItem[] }) {
   const [activeCategory, setActiveCategory] = useState("ALL");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const hasRealItems = items.length > 0;
 
@@ -141,74 +143,62 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
           {hasRealItems
-            ? filteredReal.map((item) => {
-                const content = (
-                  <div className="w-full aspect-[4/5] relative overflow-hidden">
+            ? filteredReal.map((item, idx) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setLightboxIndex(idx)}
+                  className="group relative overflow-hidden bg-blanc-surface block w-full text-left cursor-zoom-in"
+                  aria-label={`${item.title || item.category} 크게 보기`}
+                >
+                  <div className="w-full aspect-square relative overflow-hidden">
                     <Image
                       src={item.imageUrl}
                       alt={item.title || item.originalName}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     />
                     {/* Hover overlay */}
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 backdrop-blur-[2px]" />
                     {/* Content Reveal */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out z-10">
+                    <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-5 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out z-10">
                       {item.tag && (
-                        <span className="font-display text-[10px] tracking-[0.3em] text-white/80 uppercase mb-2">
+                        <span className="font-display text-[9px] tracking-[0.3em] text-white/80 uppercase mb-1.5">
                           {item.tag}
                         </span>
                       )}
-                      <p className="font-display text-xl text-white font-light tracking-wide">
+                      <p className="font-display text-sm md:text-base text-white font-light tracking-wide line-clamp-2">
                         {item.title || item.category}
                       </p>
                     </div>
                   </div>
-                );
-                return item.linkUrl ? (
-                  <a
-                    key={item.id}
-                    href={item.linkUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative overflow-hidden bg-blanc-surface block"
-                  >
-                    {content}
-                  </a>
-                ) : (
-                  <div
-                    key={item.id}
-                    className="group relative overflow-hidden bg-blanc-surface"
-                  >
-                    {content}
-                  </div>
-                );
-              })
+                </button>
+              ))
             : filteredPlaceholder.map((item) => (
                 <div
                   key={item.id}
                   className="group relative overflow-hidden bg-blanc-surface"
                 >
-                  <div className="w-full aspect-[4/5] relative overflow-hidden">
+                  <div className="w-full aspect-square relative overflow-hidden">
                     <div
                       className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`}
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-20 h-20 rounded-full border border-white/40 flex items-center justify-center">
-                        <span className="font-display text-sm italic text-blanc-text-muted/50">
+                      <div className="w-16 h-16 rounded-full border border-white/40 flex items-center justify-center">
+                        <span className="font-display text-xs italic text-blanc-text-muted/50">
                           Photo
                         </span>
                       </div>
                     </div>
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 backdrop-blur-[2px]" />
-                    <div className="absolute inset-0 flex flex-col justify-end p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out z-10">
-                      <span className="font-display text-[10px] tracking-[0.3em] text-white/80 uppercase mb-2">
+                    <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-5 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out z-10">
+                      <span className="font-display text-[9px] tracking-[0.3em] text-white/80 uppercase mb-1.5">
                         {item.tag}
                       </span>
-                      <p className="font-display text-xl text-white font-light tracking-wide">
+                      <p className="font-display text-sm md:text-base text-white font-light tracking-wide line-clamp-2">
                         {item.title}
                       </p>
                     </div>
@@ -228,6 +218,14 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
           </div>
         )}
       </div>
+
+      {hasRealItems && lightboxIndex !== null && (
+        <PortfolioLightbox
+          items={filteredReal}
+          startIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
     </section>
   );
 }

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import FloatingContact from "@/app/components/FloatingContact";
+import CategoryPortfolioGrid from "@/app/components/CategoryPortfolioGrid";
 import {
   getServiceCategoryBySlug,
   serviceCategories,
@@ -158,50 +158,7 @@ export default async function ServiceCategoryPage({
                 준비 중입니다. 곧 작품을 업데이트해 드릴게요.
               </p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                {items.map((item) => {
-                  const content = (
-                    <div className="w-full aspect-4/5 relative overflow-hidden">
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.title || item.originalName}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 backdrop-blur-[2px]" />
-                      <div className="absolute inset-0 flex flex-col justify-end p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out z-10">
-                        {item.tag && (
-                          <span className="font-display text-[10px] tracking-[0.3em] text-white/80 uppercase mb-2">
-                            {item.tag}
-                          </span>
-                        )}
-                        <p className="font-display text-xl text-white font-light tracking-wide">
-                          {item.title || item.category}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                  return item.linkUrl ? (
-                    <a
-                      key={item.id}
-                      href={item.linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative overflow-hidden bg-blanc-surface block"
-                    >
-                      {content}
-                    </a>
-                  ) : (
-                    <div
-                      key={item.id}
-                      className="group relative overflow-hidden bg-blanc-surface"
-                    >
-                      {content}
-                    </div>
-                  );
-                })}
-              </div>
+              <CategoryPortfolioGrid items={items} />
             )}
           </div>
         </section>
