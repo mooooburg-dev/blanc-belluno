@@ -1,47 +1,10 @@
 'use client';
 
-const services = [
-  {
-    category: 'Party',
-    title: 'BIRTHDAY PARTY',
-    subtitle: '생일파티',
-    description:
-      '아이부터 어른까지, 생애 가장 특별한 날을 완성하는 프라이빗 풍선 아치와 가랜드 연출.',
-    tags: ['키즈 파티', '어른 생일', '서프라이즈'],
-    color: 'bg-blanc-blush-light',
-    accent: 'bg-blanc-blush',
-  },
-  {
-    category: 'Wedding',
-    title: 'WEDDING & DOL',
-    subtitle: '웨딩 & 돌잔치',
-    description:
-      '인생의 가장 아름다운 순간을 위한 하이엔드 풍선 장식. 포토존부터 메인 무대까지 섬세한 터치.',
-    tags: ['웨딩홀', '포토존', '돌상 세팅'],
-    color: 'bg-blanc-champagne/20',
-    accent: 'bg-blanc-champagne',
-  },
-  {
-    category: 'Baby',
-    title: 'BABY SHOWER',
-    subtitle: '베이비샤워',
-    description:
-      '새 생명의 탄생을 축복하는 우아한 파스텔 무드. 젠더 리빌 파티를 위한 특별한 셋업.',
-    tags: ['젠더 리빌', '임신 축하', '신생아 파티'],
-    color: 'bg-blanc-base',
-    accent: 'bg-blanc-sand/30',
-  },
-  {
-    category: 'Corporate',
-    title: 'CORPORATE EVENTS',
-    subtitle: '기업 & 행사',
-    description:
-      '브랜드 아이덴티티를 돋보이게 하는 프로페셔널 공간 연출. 론칭 쇼, 팝업스토어, VIP 행사.',
-    tags: ['론칭 파티', '팝업스토어', '사내 행사'],
-    color: 'bg-white',
-    accent: 'bg-blanc-gold/10',
-  },
-];
+import Link from 'next/link';
+import {
+  serviceCategories,
+  type ServiceCategory,
+} from '@/lib/service-categories';
 
 export default function Services() {
   return (
@@ -67,8 +30,8 @@ export default function Services() {
 
         {/* Service Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-6">
-          {services.map((service, index) => (
-            <ServiceCard key={index} service={service} />
+          {serviceCategories.map((service) => (
+            <ServiceCard key={service.slug} service={service} />
           ))}
         </div>
 
@@ -95,10 +58,11 @@ export default function Services() {
   );
 }
 
-function ServiceCard({ service }: { service: (typeof services)[0] }) {
+function ServiceCard({ service }: { service: ServiceCategory }) {
   return (
-    <div
-      className={`group relative overflow-hidden p-5 sm:p-7 lg:p-8 transition-all duration-500 hover:-translate-y-1 border border-blanc-champagne/40 ${service.color}`}
+    <Link
+      href={`/services/${service.slug}`}
+      className={`group relative overflow-hidden p-5 sm:p-7 lg:p-8 transition-all duration-500 hover:-translate-y-1 border border-blanc-champagne/40 block ${service.color}`}
     >
       {/* Decorative Background Accent */}
       <div
@@ -109,7 +73,7 @@ function ServiceCard({ service }: { service: (typeof services)[0] }) {
         {/* Category & Title */}
         <div className="mb-5 sm:mb-6 lg:mb-8">
           <span className="font-display text-[9px] sm:text-[10px] tracking-[0.25em] sm:tracking-[0.3em] uppercase text-blanc-gold block mb-2 sm:mb-3">
-            {service.category}
+            {service.label}
           </span>
           <h3 className="font-display text-base sm:text-lg lg:text-xl xl:text-2xl font-light text-blanc-text-primary tracking-wide mb-1.5 sm:mb-2">
             {service.title}
@@ -125,7 +89,7 @@ function ServiceCard({ service }: { service: (typeof services)[0] }) {
         </p>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-x-3 sm:gap-x-5 gap-y-2">
+        <div className="flex flex-wrap gap-x-3 sm:gap-x-5 gap-y-2 mb-5 sm:mb-6">
           {service.tags.map((tag) => (
             <span
               key={tag}
@@ -135,7 +99,15 @@ function ServiceCard({ service }: { service: (typeof services)[0] }) {
             </span>
           ))}
         </div>
+
+        {/* View More */}
+        <span className="font-body text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-blanc-text-primary inline-flex items-center gap-2 mt-auto">
+          자세히 보기
+          <span className="inline-block transform transition-transform group-hover:translate-x-1">
+            →
+          </span>
+        </span>
       </div>
-    </div>
+    </Link>
   );
 }
