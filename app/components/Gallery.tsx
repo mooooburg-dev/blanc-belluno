@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { serviceCategories } from "@/lib/service-categories";
 
 interface PortfolioItem {
   id: string;
@@ -101,7 +103,7 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
         </div>
 
         {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-12">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-6">
           {displayCategories.map((cat) => (
             <button
               key={cat}
@@ -115,6 +117,27 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
               {cat}
             </button>
           ))}
+        </div>
+
+        {/* Active category detail link */}
+        <div className="flex justify-center mb-12 min-h-[24px]">
+          {(() => {
+            const matched = serviceCategories.find(
+              (s) => s.category === activeCategory
+            );
+            if (!matched) return null;
+            return (
+              <Link
+                href={`/services/${matched.slug}`}
+                className="group font-body text-[11px] tracking-[0.2em] uppercase text-blanc-text-secondary hover:text-blanc-text-primary transition-colors inline-flex items-center gap-2"
+              >
+                {matched.label} 서비스 자세히 보기
+                <span className="inline-block transform transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+            );
+          })()}
         </div>
 
         {/* Grid */}
