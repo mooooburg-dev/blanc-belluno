@@ -204,7 +204,7 @@ export default function Hero({ slides }: HeroProps) {
                 style={{ animationDelay: "0.2s" }}
               >
                 Blanc{" "}
-                <span className="italic text-blanc-text-secondary/80">
+                <span className="text-blanc-text-secondary/80">
                   Belluno
                 </span>
               </div>

@@ -104,13 +104,13 @@ export default function ContactForm({ settings }: { settings: SiteSettings }) {
         <div className="max-w-md mx-auto text-center py-16">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-blanc-surface border border-blanc-champagne relative overflow-hidden">
             <div className="absolute inset-0 bg-blanc-blush opacity-20" />
-            <span className="font-display text-2xl italic text-blanc-gold">
+            <span className="font-display text-2xl text-blanc-gold">
               B.
             </span>
           </div>
           <h3 className="font-display text-3xl md:text-4xl font-light text-blanc-text-primary mb-4 tracking-tight">
             상담 신청이{" "}
-            <span className="italic text-blanc-text-secondary">
+            <span className="text-blanc-text-secondary">
               완료되었습니다
             </span>
           </h3>
@@ -157,27 +157,27 @@ export default function ContactForm({ settings }: { settings: SiteSettings }) {
 
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-14 md:mb-16">
-          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-5">
+        <div className="text-center mb-10 md:mb-12">
+          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-4">
             Inquiry
           </span>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary tracking-tight mb-6">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary tracking-tight mb-5">
             상담{" "}
-            <span className="italic text-blanc-text-secondary">신청하기</span>
+            <span className="text-blanc-text-secondary">신청하기</span>
           </h2>
           <div className="divider-gold" />
-          <p className="font-body text-sm md:text-base mt-8 max-w-lg mx-auto leading-relaxed text-blanc-text-secondary font-light">
+          <p className="font-body text-sm md:text-base mt-6 max-w-lg mx-auto leading-relaxed text-blanc-text-secondary font-light">
             특별한 날을 위한 완벽한 공간 연출,
             <br className="hidden md:block" />
             아래 폼을 통해 편하게 문의해 주세요.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
           {/* Left Info Column */}
-          <div className="lg:col-span-4 flex flex-col gap-10">
+          <div className="lg:col-span-4 flex flex-col gap-7">
             <div>
-              <h3 className="font-display text-xl text-blanc-text-primary mb-4">
+              <h3 className="font-display text-xl text-blanc-text-primary mb-3">
                 Contact Info
               </h3>
               <p className="font-body text-sm text-blanc-text-secondary font-light leading-relaxed">
@@ -186,7 +186,7 @@ export default function ContactForm({ settings }: { settings: SiteSettings }) {
               </p>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               {settings.kakaoChannel && (
                 <ContactLink
                   title="KAKAO CHANNEL"

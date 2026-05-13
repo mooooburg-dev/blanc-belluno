@@ -11,16 +11,16 @@ export default function Services() {
     <section id="services" className="section-padding bg-blanc-surface">
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-16 md:mb-20">
-          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-5">
+        <div className="text-center mb-10 md:mb-12">
+          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-4">
             Our Expertise
           </span>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary mb-6 tracking-tight">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary mb-5 tracking-tight">
             어떤 날이든,{' '}
-            <span className="italic text-blanc-text-secondary">특별하게</span>
+            <span className="text-blanc-text-secondary">특별하게</span>
           </h2>
           <div className="divider-gold" />
-          <p className="font-body text-sm md:text-base mt-8 mx-auto leading-relaxed text-blanc-text-secondary font-light">
+          <p className="font-body text-sm md:text-base mt-6 mx-auto leading-relaxed text-blanc-text-secondary font-light">
             블랑벨루노는 모든 순간을 소중히 여깁니다.
             <br className="hidden sm:block" />
             작은 홈파티부터 대규모 브랜드 행사까지, 고객의 상상을 우아한 현실로
@@ -36,8 +36,8 @@ export default function Services() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-20 flex flex-col items-center">
-          <p className="font-body text-xs text-blanc-text-muted mb-6 tracking-widest uppercase">
+        <div className="text-center mt-12 md:mt-14 flex flex-col items-center">
+          <p className="font-body text-xs text-blanc-text-muted mb-5 tracking-widest uppercase">
             Can&apos;t find what you&apos;re looking for?
           </p>
           <button

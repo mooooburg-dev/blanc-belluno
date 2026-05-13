@@ -130,15 +130,15 @@ export default function Process() {
 
       <div className="max-w-6xl mx-auto relative">
         {/* Section Header */}
-        <div className="text-center mb-16 md:mb-20">
-          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-5">
+        <div className="text-center mb-10 md:mb-12">
+          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-4">
             Our Process
           </span>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary mb-6 tracking-tight">
-            진행 <span className="italic text-blanc-text-secondary">방식</span>
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary mb-5 tracking-tight">
+            진행 <span className="text-blanc-text-secondary">방식</span>
           </h2>
           <div className="divider-gold" />
-          <p className="font-body text-sm md:text-base mt-8 max-w-xl mx-auto leading-relaxed text-blanc-text-secondary font-light">
+          <p className="font-body text-sm md:text-base mt-6 max-w-xl mx-auto leading-relaxed text-blanc-text-secondary font-light">
             첫 문의부터 행사 당일까지,
             <br />
             블랑벨루노가 모든 과정을 섬세하게 함께합니다.
@@ -146,7 +146,7 @@ export default function Process() {
         </div>
 
         {/* Steps */}
-        <ol className="grid grid-cols-6 lg:grid-cols-5 gap-y-8 sm:gap-y-10 lg:gap-y-12 gap-x-2 sm:gap-x-4 lg:gap-x-2 relative">
+        <ol className="grid grid-cols-6 lg:grid-cols-5 gap-y-6 sm:gap-y-8 lg:gap-y-10 gap-x-2 sm:gap-x-4 lg:gap-x-2 relative">
           {steps.map((item, index) => {
             // Mobile (<lg): 6-col grid — first 3 items span 2 (3-up row).
             // Last 2 items span 2 and start at col 2 / col 4 so they sit centered and close together.

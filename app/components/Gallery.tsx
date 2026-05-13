@@ -96,19 +96,19 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
     <section id="gallery" className="section-padding bg-blanc-base">
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-14 md:mb-16">
-          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-5">
+        <div className="text-center mb-10 md:mb-12">
+          <span className="font-display text-[10px] sm:text-xs tracking-[0.4em] uppercase text-blanc-gold block mb-4">
             Portfolio
           </span>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary tracking-tight mb-6">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-blanc-text-primary tracking-tight mb-5">
             블랑벨루노의{" "}
-            <span className="italic text-blanc-text-secondary">작품들</span>
+            <span className="text-blanc-text-secondary">작품들</span>
           </h2>
           <div className="divider-gold" />
         </div>
 
         {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-6">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-5">
           {displayCategories.map((cat) => (
             <button
               key={cat}
@@ -128,7 +128,7 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
         </div>
 
         {/* Active category detail link */}
-        <div className="flex justify-center mb-12 min-h-[24px]">
+        <div className="flex justify-center mb-8 min-h-[24px]">
           {(() => {
             const matched = serviceCategories.find(
               (s) => s.category === activeCategory
@@ -194,7 +194,7 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-16 h-16 rounded-full border border-white/40 flex items-center justify-center">
-                        <span className="font-display text-xs italic text-blanc-text-muted/50">
+                        <span className="font-display text-xs text-blanc-text-muted/50">
                           Photo
                         </span>
                       </div>
@@ -215,7 +215,7 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
 
         {/* Load more */}
         {hasRealItems && filteredReal.length > visibleCount && (
-          <div className="mt-10 md:mt-12 flex justify-center">
+          <div className="mt-8 md:mt-10 flex justify-center">
             <button
               type="button"
               onClick={() =>
