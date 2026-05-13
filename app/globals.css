@@ -241,3 +241,32 @@ body {
   border: 2px solid white !important;
   border-radius: 9999px;
 }
+
+/* Portfolio Lightbox — Swiper pagination */
+.portfolio-lightbox-pagination .swiper-pagination-bullet {
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+  margin: 0 4px !important;
+  transition: all 0.3s ease;
+}
+
+.portfolio-lightbox-pagination .swiper-pagination-bullet-active {
+  background: rgba(255, 255, 255, 0.95);
+  width: 24px;
+  border-radius: 3px;
+}
+
+/* Swipe hint animation */
+@keyframes swipeHint {
+  0% { opacity: 0; transform: translateX(0); }
+  20% { opacity: 1; }
+  50% { transform: translateX(14px); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+.animate-swipe-hint {
+  animation: swipeHint 1.8s ease-in-out 1;
+}
