@@ -142,8 +142,14 @@ export default function Header() {
             />
           </button>
           <Link
-            href="#home"
-            onClick={() => handleNavClick("#home")}
+            href="/"
+            onClick={(e) => {
+              if (isHome) {
+                e.preventDefault();
+                handleNavClick("#home");
+              }
+            }}
+            aria-label="홈으로 이동"
             className="flex items-center justify-center ml-2.5"
           >
             <span className="font-body text-base md:text-lg font-medium tracking-[0.05em] leading-none text-blanc-text-secondary group-hover:text-blanc-text-primary transition-colors">
