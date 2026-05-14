@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import PortfolioLightbox, { type LightboxItem } from "./PortfolioLightbox";
+import { useState } from 'react';
+import Image from 'next/image';
+import PortfolioLightbox, { type LightboxItem } from './PortfolioLightbox';
 
 interface Props {
   items: LightboxItem[];
@@ -25,7 +25,7 @@ export default function CategoryPortfolioGrid({ items }: Props) {
             <div className="w-full aspect-square relative overflow-hidden">
               <Image
                 src={item.imageUrl}
-                alt={item.title || item.originalName || ""}
+                alt={item.title || item.originalName || ''}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
