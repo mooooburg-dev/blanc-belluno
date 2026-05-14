@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Noto_Sans_KR, Playfair_Display } from "next/font/google";
+import {
+  Cormorant_Garamond,
+  Noto_Sans_KR,
+  Noto_Serif_KR,
+  Playfair_Display,
+} from "next/font/google";
 import "./globals.css";
 import {
   DEFAULT_DESCRIPTION,
@@ -22,6 +27,13 @@ const cormorant = Cormorant_Garamond({
 
 const notoSansKR = Noto_Sans_KR({
   variable: "--font-noto",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
+const notoSerifKR = Noto_Serif_KR({
+  variable: "--font-noto-serif",
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
@@ -106,7 +118,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className="scroll-smooth">
       <body
-        className={`${cormorant.variable} ${notoSansKR.variable} ${playfair.variable} antialiased`}
+        className={`${cormorant.variable} ${notoSansKR.variable} ${notoSerifKR.variable} ${playfair.variable} antialiased`}
       >
         {children}
       </body>

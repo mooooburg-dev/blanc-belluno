@@ -52,9 +52,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Display font overrides */
+/* Display font overrides — 라틴은 Cormorant Garamond, 한글은 Noto Serif KR */
 .font-display {
-  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-cormorant), var(--font-noto-serif),
+    "Cormorant Garamond", "Noto Serif KR", "AppleMyungjo", "Nanum Myeongjo",
+    Georgia, serif;
 }
 
 /* Logo font — Playfair Display */
