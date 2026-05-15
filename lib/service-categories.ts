@@ -16,68 +16,6 @@ export interface ServiceCategory {
 
 export const serviceCategories: ServiceCategory[] = [
   {
-    slug: 'arch',
-    category: 'ARCH',
-    label: 'Arch',
-    title: 'BALLOON ARCH',
-    subtitle: '아치 / 반아치',
-    description:
-      '공간의 주인공이 되는 풍선 아치. 입구·포토존을 압도하는 풀 아치와 반아치 디자인.',
-    longDescription:
-      '아치와 반아치는 행사 공간의 첫인상을 결정짓는 핵심 오브제입니다. 컬러와 사이즈, 곡선을 컨셉에 맞춰 1:1 제작합니다.',
-    tags: ['풀 아치', '반아치', '메인 포토존'],
-    highlights: [
-      {
-        title: '맞춤 사이즈 제작',
-        description:
-          '공간 사이즈와 천장 높이에 맞춰 아치의 폭·높이·곡률을 설계합니다.',
-      },
-      {
-        title: '컬러 팔레트 큐레이션',
-        description:
-          '테마와 의상·소품 컬러까지 고려한 라텍스·포일 풍선 조합 제안.',
-      },
-      {
-        title: '안정적인 현장 설치',
-        description:
-          '대형 아치도 안전하게 고정·운영할 수 있도록 전문 인력이 설치합니다.',
-      },
-    ],
-    color: 'bg-blanc-champagne/20',
-    accent: 'bg-blanc-champagne',
-  },
-  {
-    slug: 'number-tower',
-    category: 'NUMBER TOWER',
-    label: 'Number',
-    title: 'NUMBER TOWER',
-    subtitle: '숫자 타워',
-    description:
-      '나이·기념일 숫자를 풍선으로 표현하는 임팩트 오브제. 포토존의 시그니처가 됩니다.',
-    longDescription:
-      '한 자리·두 자리·세 자리 숫자 타워는 생일과 기념일의 상징입니다. 컬러와 디테일 장식으로 한 장의 사진을 작품으로 만듭니다.',
-    tags: ['생일 숫자', '기념일', '포토 오브제'],
-    highlights: [
-      {
-        title: '맞춤 숫자 디자인',
-        description:
-          '원하는 숫자·서체·사이즈로 1:1 제작. 단독 또는 아치와 결합 가능.',
-      },
-      {
-        title: '디테일 데코',
-        description:
-          '리본·꽃·LED 등 추가 데코로 숫자 타워의 완성도를 한 단계 끌어올립니다.',
-      },
-      {
-        title: '실내·실외 모두',
-        description:
-          '스튜디오·홈파티·야외 행사 어디서나 안정적으로 세팅 가능한 구조.',
-      },
-    ],
-    color: 'bg-blanc-blush-light',
-    accent: 'bg-blanc-blush',
-  },
-  {
     slug: 'dol',
     category: 'DOL',
     label: 'Dol',
@@ -262,6 +200,68 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-blanc-champagne/20',
     accent: 'bg-blanc-champagne',
+  },
+  {
+    slug: 'arch',
+    category: 'ARCH',
+    label: 'Arch',
+    title: 'BALLOON ARCH',
+    subtitle: '아치 / 반아치',
+    description:
+      '공간의 주인공이 되는 풍선 아치. 입구·포토존을 압도하는 풀 아치와 반아치 디자인.',
+    longDescription:
+      '아치와 반아치는 행사 공간의 첫인상을 결정짓는 핵심 오브제입니다. 컬러와 사이즈, 곡선을 컨셉에 맞춰 1:1 제작합니다.',
+    tags: ['풀 아치', '반아치', '메인 포토존'],
+    highlights: [
+      {
+        title: '맞춤 사이즈 제작',
+        description:
+          '공간 사이즈와 천장 높이에 맞춰 아치의 폭·높이·곡률을 설계합니다.',
+      },
+      {
+        title: '컬러 팔레트 큐레이션',
+        description:
+          '테마와 의상·소품 컬러까지 고려한 라텍스·포일 풍선 조합 제안.',
+      },
+      {
+        title: '안정적인 현장 설치',
+        description:
+          '대형 아치도 안전하게 고정·운영할 수 있도록 전문 인력이 설치합니다.',
+      },
+    ],
+    color: 'bg-blanc-champagne/20',
+    accent: 'bg-blanc-champagne',
+  },
+  {
+    slug: 'number-tower',
+    category: 'NUMBER TOWER',
+    label: 'Number',
+    title: 'NUMBER TOWER',
+    subtitle: '숫자 타워',
+    description:
+      '나이·기념일 숫자를 풍선으로 표현하는 임팩트 오브제. 포토존의 시그니처가 됩니다.',
+    longDescription:
+      '한 자리·두 자리·세 자리 숫자 타워는 생일과 기념일의 상징입니다. 컬러와 디테일 장식으로 한 장의 사진을 작품으로 만듭니다.',
+    tags: ['생일 숫자', '기념일', '포토 오브제'],
+    highlights: [
+      {
+        title: '맞춤 숫자 디자인',
+        description:
+          '원하는 숫자·서체·사이즈로 1:1 제작. 단독 또는 아치와 결합 가능.',
+      },
+      {
+        title: '디테일 데코',
+        description:
+          '리본·꽃·LED 등 추가 데코로 숫자 타워의 완성도를 한 단계 끌어올립니다.',
+      },
+      {
+        title: '실내·실외 모두',
+        description:
+          '스튜디오·홈파티·야외 행사 어디서나 안정적으로 세팅 가능한 구조.',
+      },
+    ],
+    color: 'bg-blanc-blush-light',
+    accent: 'bg-blanc-blush',
   },
 ];
 

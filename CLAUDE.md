@@ -57,7 +57,7 @@ yarn lint        # ESLint 검사
 `lib/portfolio.ts`의 `CATEGORIES`와 `lib/service-categories.ts`가 단일 진실 공급원(SSOT)입니다. 신규 카테고리 추가/변경 시 두 파일을 함께 업데이트해야 합니다.
 
 현재 8개:
-`ARCH` / `NUMBER TOWER` / `DOL` / `SENIOR` / `CORPORATE` / `PARTY` / `SCHOOL` / `WEDDING`
+`DOL` / `SENIOR` / `CORPORATE` / `PARTY` / `SCHOOL` / `WEDDING` / `ARCH` / `NUMBER TOWER`
 
 DB의 `belluno_portfolio.category`는 `TEXT NOT NULL`로 CHECK 제약이 없으므로 코드 상수만 바꾸면 DB 스키마 변경 없이 신규 값 저장이 가능합니다.
 

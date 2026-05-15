@@ -1,14 +1,14 @@
 import { supabase, getStorageUrl } from "./supabase";
 
 export const CATEGORIES = [
-  "ARCH",
-  "NUMBER TOWER",
   "DOL",
   "SENIOR",
   "CORPORATE",
   "PARTY",
   "SCHOOL",
   "WEDDING",
+  "ARCH",
+  "NUMBER TOWER",
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
