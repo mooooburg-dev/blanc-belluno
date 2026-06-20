@@ -15,6 +15,7 @@ import {
   SITE_NAME,
   SITE_NAME_KO,
   SITE_URL,
+  OG_IMAGE_URL,
 } from "@/lib/seo";
 
 const cormorant = Cormorant_Garamond({
@@ -71,10 +72,10 @@ export const metadata: Metadata = {
     description: DEFAULT_DESCRIPTION,
     images: [
       {
-        url: "/blanc_belluno_logo.jpg",
-        width: 800,
-        height: 800,
-        alt: `${SITE_NAME_KO} ${SITE_NAME} 로고`,
+        url: OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME_KO} — 풍선 장식 포트폴리오`,
       },
     ],
   },
@@ -82,7 +83,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
-    images: ["/blanc_belluno_logo.jpg"],
+    images: [OG_IMAGE_URL],
   },
   robots: {
     index: true,
