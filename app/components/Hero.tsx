@@ -107,6 +107,12 @@ export default function Hero() {
             Blanc{' '}
             <span className="text-blanc-text-secondary/80">Belluno</span>
           </div>
+          <span
+            className="block mt-5 font-body text-sm md:text-base font-light tracking-[0.12em] text-blanc-text-secondary whitespace-normal opacity-0 animate-fade-up"
+            style={{ animationDelay: '0.3s' }}
+          >
+            김포·서울·인천 풍선장식 · 돌잔치 포토존 전문
+          </span>
         </h1>
 
         {/* 설명 텍스트 */}
