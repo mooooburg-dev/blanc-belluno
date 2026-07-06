@@ -44,6 +44,18 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Tailwind CSS 4는 버튼 기본 cursor를 제거함 — PC(마우스 환경)에서 클릭 요소에 pointer 복원 */
+@media (pointer: fine) {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary,
+  select {
+    cursor: pointer;
+  }
+}
+
 body {
   background: var(--color-base);
   color: var(--color-text-primary);
