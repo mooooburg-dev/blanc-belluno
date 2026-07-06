@@ -74,15 +74,15 @@ export async function addPortfolioItem(
 ): Promise<PortfolioItem | null> {
   if (!supabase) return null;
 
-  // 현재 최대 sort_order 조회
-  const { data: maxRow } = await supabase
+  // 현재 최소 sort_order 조회 (새 항목을 맨 위에 노출하기 위해 그보다 작은 값 부여)
+  const { data: minRow } = await supabase
     .from("belluno_portfolio")
     .select("sort_order")
-    .order("sort_order", { ascending: false })
+    .order("sort_order", { ascending: true })
     .limit(1)
     .single();
 
-  const nextOrder = maxRow ? maxRow.sort_order + 1 : 0;
+  const nextOrder = minRow ? minRow.sort_order - 1 : 0;
 
   const { data, error } = await supabase
     .from("belluno_portfolio")
