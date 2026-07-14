@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import Services from "./components/Services";
 import Process from "./components/Process";
 import Gallery from "./components/Gallery";
+import NaverBlog from "./components/NaverBlog";
 import InstagramFeed from "./components/InstagramFeed";
 import InstagramFeedSkeleton from "./components/InstagramFeedSkeleton";
 import ContactForm from "./components/ContactForm";
@@ -34,6 +35,7 @@ export default async function Home() {
         <Services />
         <Process />
         <Gallery items={portfolioItems} />
+        <NaverBlog blogUrl={settings.naverBlog} />
         <Suspense fallback={<InstagramFeedSkeleton handle={settings.instagram} />}>
           <InstagramFeed settings={settings} />
         </Suspense>

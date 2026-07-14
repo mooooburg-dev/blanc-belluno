@@ -18,6 +18,7 @@ const navLinks = [
   { label: "서비스", href: "#services" },
   { label: "진행방식", href: "#process" },
   { label: "포트폴리오", href: "#gallery" },
+  { label: "블로그", href: "#blog" },
   { label: "인스타그램", href: "#instagram" },
 ];
 
