@@ -1,6 +1,6 @@
 export const SITE_URL = "https://blanc-belluno.com";
 
-export const OG_IMAGE_URL = `${SITE_URL}/og-image.jpg`;
+export const OG_IMAGE_URL = `${SITE_URL}/blanc-belluno-og.png`;
 
 // 발급받은 검증 토큰 값을 여기에 붙여넣으세요. 빈 문자열이면 메타태그가 출력되지 않습니다.
 export const GOOGLE_SITE_VERIFICATION = "";
