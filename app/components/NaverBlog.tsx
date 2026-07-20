@@ -42,6 +42,7 @@ export default async function NaverBlog({ blogUrl }: { blogUrl: string }) {
                     alt={post.title}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                    referrerPolicy="no-referrer"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
