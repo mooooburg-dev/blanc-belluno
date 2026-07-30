@@ -1,3 +1,5 @@
+import { supabase } from './supabase';
+
 export interface InstagramPost {
   id: string;
   caption?: string;
@@ -10,10 +12,33 @@ export interface InstagramPost {
 
 const INSTAGRAM_GRAPH_API = "https://graph.instagram.com";
 
+async function getAccessToken(): Promise<string | null> {
+  if (supabase) {
+    const { data } = await supabase
+      .from('belluno_settings')
+      .select('value')
+      .eq('key', 'instagramAccessToken')
+      .single();
+    if (data?.value) return data.value;
+  }
+  return process.env.INSTAGRAM_ACCESS_TOKEN || null;
+}
+
+export async function saveAccessToken(token: string): Promise<boolean> {
+  if (!supabase) return false;
+  const { error } = await supabase
+    .from('belluno_settings')
+    .upsert(
+      { key: 'instagramAccessToken', value: token, updated_at: new Date().toISOString() },
+      { onConflict: 'key' }
+    );
+  return !error;
+}
+
 export async function getInstagramFeed(
   count: number = 6
 ): Promise<InstagramPost[]> {
-  const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+  const accessToken = await getAccessToken();
 
   if (!accessToken) {
     console.warn("INSTAGRAM_ACCESS_TOKEN이 설정되지 않았습니다.");
@@ -60,7 +85,7 @@ export interface InstagramStory {
 }
 
 export async function getInstagramStories(): Promise<InstagramStory[]> {
-  const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+  const accessToken = await getAccessToken();
 
   if (!accessToken) {
     console.warn("INSTAGRAM_ACCESS_TOKEN이 설정되지 않았습니다.");
@@ -105,24 +130,29 @@ export async function getInstagramStories(): Promise<InstagramStory[]> {
   }
 }
 
-/**
- * 장기 토큰 갱신 (60일마다 필요)
- * 크론잡이나 수동으로 호출
- */
 export async function refreshLongLivedToken(): Promise<string | null> {
-  const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
-
+  const accessToken = await getAccessToken();
   if (!accessToken) return null;
 
   try {
     const url = `${INSTAGRAM_GRAPH_API}/refresh_access_token?grant_type=ig_refresh_token&access_token=${accessToken}`;
     const res = await fetch(url);
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      console.error('Instagram 토큰 갱신 실패:', error);
+      return null;
+    }
 
     const data = await res.json();
-    return data.access_token || null;
-  } catch {
+    const newToken = data.access_token;
+    if (!newToken) return null;
+
+    await saveAccessToken(newToken);
+    console.log('Instagram 토큰 갱신 완료, 만료:', data.expires_in ? `${Math.round(data.expires_in / 86400)}일 후` : '알 수 없음');
+    return newToken;
+  } catch (error) {
+    console.error('Instagram 토큰 갱신 중 오류:', error);
     return null;
   }
 }
