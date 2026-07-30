@@ -4,30 +4,17 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import StoryViewer from "./StoryViewer";
-
-interface Story {
-  id: string;
-  mediaUrl: string;
-  mediaType: "IMAGE" | "VIDEO";
-  timestamp: string;
-}
-
 const navLinks = [
   { label: "홈", href: "#home" },
   { label: "서비스", href: "#services" },
   { label: "진행방식", href: "#process" },
   { label: "포트폴리오", href: "#gallery" },
   { label: "블로그", href: "#blog" },
-  { label: "인스타그램", href: "#instagram" },
 ];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [stories, setStories] = useState<Story[]>([]);
-  const [storyOpen, setStoryOpen] = useState(false);
-  const [hasStories, setHasStories] = useState(false);
   const pendingScrollHref = useRef<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -76,19 +63,6 @@ export default function Header() {
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   }, [menuOpen, isHome, router]);
 
-  // 스토리 데이터 로드
-  useEffect(() => {
-    fetch("/api/instagram/stories")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.stories && data.stories.length > 0) {
-          setStories(data.stories);
-          setHasStories(true);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
   const handleNavClick = (href: string) => {
     if (menuOpen) {
       pendingScrollHref.current = href;
@@ -106,15 +80,6 @@ export default function Header() {
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleLogoClick = (e: React.MouseEvent) => {
-    if (hasStories) {
-      e.preventDefault();
-      setStoryOpen(true);
-    } else {
-      handleNavClick("#home");
-    }
-  };
-
   return (
     <>
     <header
@@ -130,9 +95,9 @@ export default function Header() {
         {/* Logo with Story Ring */}
         <div className="flex items-center group">
           <button
-            onClick={handleLogoClick}
-            className={`relative cursor-pointer rounded-full ${hasStories ? "story-ring" : ""}`}
-            aria-label={hasStories ? "스토리 보기" : "홈으로 이동"}
+            onClick={() => handleNavClick("#home")}
+            className="relative cursor-pointer rounded-full"
+            aria-label="홈으로 이동"
           >
             <Image
               src="/blanc_belluno_logo.jpg"
@@ -244,11 +209,6 @@ export default function Header() {
       </nav>
     </div>
 
-    <StoryViewer
-      isOpen={storyOpen}
-      onClose={() => setStoryOpen(false)}
-      stories={stories}
-    />
     </>
   );
 }
