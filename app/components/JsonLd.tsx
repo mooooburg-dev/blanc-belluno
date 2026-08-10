@@ -26,7 +26,7 @@ export default function JsonLd({ phone, instagram, naverBlog }: JsonLdProps) {
     alternateName: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
     url: SITE_URL,
-    image: `${SITE_URL}/blanc_belluno_logo.jpg`,
+    image: `${SITE_URL}/blanc-belluno-og.png`,
     logo: `${SITE_URL}/icon-512.png`,
     ...(phone ? { telephone: phone } : {}),
     priceRange: "₩₩",
