@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
+import { processUploadImage } from "@/lib/image";
 import {
   getHeroSlides,
   addHeroSlide,
@@ -34,13 +35,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
   }
 
-  const ext = file.name.split(".").pop() || "jpg";
+  // 히어로는 풀스크린 배경이라 큰 해상도 유지 (GIF는 원본 유지)
+  const { buffer, ext, contentType } = await processUploadImage(file, {
+    maxDimension: 2560,
+  });
   const filename = `hero-${uuidv4()}.${ext}`;
 
-  const bytes = await file.arrayBuffer();
   const { error: uploadError } = await supabase.storage
     .from("belluno-uploads")
-    .upload(filename, bytes, { contentType: file.type });
+    .upload(filename, buffer, { contentType });
 
   if (uploadError) {
     return NextResponse.json(

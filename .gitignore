@@ -43,3 +43,6 @@ next-env.d.ts
 # portfolio data & uploads
 /data/
 /public/uploads/
+
+# 스토리지 백업 (로컬 전용)
+storage-backup/

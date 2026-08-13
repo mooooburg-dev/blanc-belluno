@@ -190,6 +190,7 @@ export default function PortfolioLightbox({
                     className="object-contain select-none w-auto h-auto max-w-full max-h-full"
                     sizes="100vw"
                     priority={item.id === current.id}
+                    unoptimized={item.imageUrl.endsWith('.gif')}
                   />
                 </div>
               </div>

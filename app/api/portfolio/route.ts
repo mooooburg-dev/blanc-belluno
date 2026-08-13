@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
+import { processUploadImage } from "@/lib/image";
 import {
   getPortfolioItems,
   addPortfolioItem,
@@ -40,15 +41,17 @@ export async function POST(request: NextRequest) {
   const tag = (formData.get("tag") as string) || "";
   const linkUrl = (formData.get("linkUrl") as string) || "";
 
-  const ext = file.name.split(".").pop() || "jpg";
+  // sharp로 리사이즈·WebP 압축 (GIF는 원본 유지)
+  const { buffer, ext, contentType } = await processUploadImage(file, {
+    maxDimension: 2000,
+  });
   const filename = `${uuidv4()}.${ext}`;
 
   // Supabase Storage에 업로드
-  const bytes = await file.arrayBuffer();
   const { error: uploadError } = await supabase.storage
     .from("belluno-uploads")
-    .upload(filename, bytes, {
-      contentType: file.type,
+    .upload(filename, buffer, {
+      contentType,
     });
 
   if (uploadError) {

@@ -181,8 +181,10 @@ export default function Gallery({ items }: { items: PortfolioItem[] }) {
                       alt={item.title || item.originalName}
                       fill
                       priority={idx === 0}
+                      loading={idx === 0 ? undefined : idx < 8 ? 'eager' : 'lazy'}
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      unoptimized={item.imageUrl.endsWith('.gif')}
                     />
                     {/* Hover overlay */}
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 backdrop-blur-[2px]" />

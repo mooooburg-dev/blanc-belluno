@@ -29,6 +29,8 @@ export default function CategoryPortfolioGrid({ items }: Props) {
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                loading={idx < 8 ? 'eager' : 'lazy'}
+                unoptimized={item.imageUrl.endsWith('.gif')}
               />
               <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 backdrop-blur-[2px]" />
               <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-5 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out z-10">
