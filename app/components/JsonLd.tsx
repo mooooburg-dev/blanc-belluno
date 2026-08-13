@@ -6,13 +6,26 @@ import {
   SERVICE_AREAS,
 } from "@/lib/seo";
 
+export interface JsonLdServiceItem {
+  url: string;
+  name: string;
+  description: string;
+  image?: string;
+}
+
 interface JsonLdProps {
   phone?: string;
   instagram?: string;
   naverBlog?: string;
+  services?: JsonLdServiceItem[];
 }
 
-export default function JsonLd({ phone, instagram, naverBlog }: JsonLdProps) {
+export default function JsonLd({
+  phone,
+  instagram,
+  naverBlog,
+  services,
+}: JsonLdProps) {
   const sameAs = [
     instagram ? `https://instagram.com/${instagram.replace(/^@/, "")}` : null,
     naverBlog || null,
@@ -67,10 +80,45 @@ export default function JsonLd({ phone, instagram, naverBlog }: JsonLdProps) {
     ],
   };
 
+  // 서비스 페이지들을 이미지+제목+URL 카드 목록으로 선언 (검색 결과 리스트/캐러셀 노출용)
+  const itemList =
+    services && services.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "@id": `${SITE_URL}/#services-list`,
+          name: `${SITE_NAME_KO} 풍선 장식 서비스`,
+          itemListElement: services.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            url: s.url,
+            name: s.name,
+            ...(s.image ? { image: s.image } : {}),
+            item: {
+              "@type": "Service",
+              "@id": `${s.url}#service`,
+              name: s.name,
+              description: s.description,
+              url: s.url,
+              ...(s.image ? { image: s.image } : {}),
+              provider: { "@id": `${SITE_URL}/#business` },
+            },
+          })),
+        }
+      : null;
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      />
+      {itemList && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
+        />
+      )}
+    </>
   );
 }

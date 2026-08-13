@@ -12,6 +12,12 @@ export interface ServiceCategory {
   highlights: { title: string; description: string }[];
   color: string;
   accent: string;
+  /** 검색엔진 노출용 페이지 타이틀 (브랜드/지역은 자동 결합) */
+  seoTitle: string;
+  /** 지역명과 결합해 지역 키워드를 생성하는 대표 키워드 (예: '돌잔치 풍선') */
+  regionKeyword: string;
+  /** 해당 카테고리의 핵심 검색 키워드 */
+  keywords: string[];
 }
 
 export const serviceCategories: ServiceCategory[] = [
@@ -45,6 +51,17 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-blanc-blush-light',
     accent: 'bg-blanc-rose',
+    seoTitle: '돌잔치 풍선 장식 · 돌상 포토존',
+    regionKeyword: '돌잔치 풍선',
+    keywords: [
+      '돌잔치 풍선',
+      '돌잔치 풍선장식',
+      '돌잔치 포토존',
+      '소규모 돌잔치',
+      '돌상 풍선',
+      '돌잔치 백드롭',
+      '돌잔치 데코',
+    ],
   },
   {
     slug: 'senior',
@@ -76,6 +93,17 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-blanc-champagne/30',
     accent: 'bg-blanc-champagne',
+    seoTitle: '생신연·회갑·칠순 풍선 장식',
+    regionKeyword: '생신연 풍선',
+    keywords: [
+      '생신연 풍선',
+      '환갑 풍선',
+      '회갑 풍선',
+      '칠순 풍선',
+      '팔순 풍선',
+      '생신 풍선장식',
+      '회갑연 포토존',
+    ],
   },
   {
     slug: 'corporate',
@@ -107,6 +135,16 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-white',
     accent: 'bg-blanc-gold/10',
+    seoTitle: '기업 행사 풍선 장식 · 브랜드 이벤트',
+    regionKeyword: '기업행사 풍선',
+    keywords: [
+      '기업행사 풍선',
+      '기업 이벤트 풍선',
+      '론칭파티 풍선',
+      '팝업스토어 풍선',
+      '사내행사 풍선',
+      '브랜드 행사 데코',
+    ],
   },
   {
     slug: 'party',
@@ -138,6 +176,16 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-blanc-blush-light',
     accent: 'bg-blanc-blush',
+    seoTitle: '생일파티 · 홈파티 풍선 장식',
+    regionKeyword: '파티 풍선',
+    keywords: [
+      '파티 풍선',
+      '생일파티 풍선',
+      '홈파티 풍선',
+      '키즈파티 풍선',
+      '파티 풍선장식',
+      '서프라이즈 파티',
+    ],
   },
   {
     slug: 'school',
@@ -169,6 +217,16 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-blanc-base',
     accent: 'bg-blanc-sand/30',
+    seoTitle: '졸업식 · 입학식 풍선 장식',
+    regionKeyword: '졸업식 풍선',
+    keywords: [
+      '졸업식 풍선',
+      '입학식 풍선',
+      '학교 행사 풍선',
+      '졸업 포토존',
+      '졸업식 풍선장식',
+      '입학식 포토존',
+    ],
   },
   {
     slug: 'wedding',
@@ -200,6 +258,16 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-blanc-champagne/20',
     accent: 'bg-blanc-champagne',
+    seoTitle: '웨딩 · 프로포즈 풍선 장식',
+    regionKeyword: '웨딩 풍선',
+    keywords: [
+      '웨딩 풍선',
+      '프로포즈 풍선',
+      '프러포즈 장식',
+      '웨딩홀 풍선 아치',
+      '버진로드 풍선',
+      '프로포즈 이벤트',
+    ],
   },
   {
     slug: 'arch',
@@ -231,6 +299,16 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-blanc-champagne/20',
     accent: 'bg-blanc-champagne',
+    seoTitle: '풍선 아치 · 반아치 제작',
+    regionKeyword: '풍선 아치',
+    keywords: [
+      '풍선 아치',
+      '반아치',
+      '풍선 아치 제작',
+      '포토존 아치',
+      '풍선 아치 장식',
+      '풍선 게이트',
+    ],
   },
   {
     slug: 'number-tower',
@@ -262,6 +340,16 @@ export const serviceCategories: ServiceCategory[] = [
     ],
     color: 'bg-blanc-blush-light',
     accent: 'bg-blanc-blush',
+    seoTitle: '숫자 풍선 타워 제작',
+    regionKeyword: '숫자 풍선',
+    keywords: [
+      '숫자 풍선',
+      '풍선 숫자 타워',
+      '생일 숫자 풍선',
+      '기념일 숫자 풍선',
+      '숫자 타워 장식',
+      '풍선 숫자',
+    ],
   },
 ];
 

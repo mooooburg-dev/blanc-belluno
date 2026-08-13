@@ -11,8 +11,16 @@ import {
 } from "@/lib/service-categories";
 import { getPortfolioItems } from "@/lib/portfolio";
 import { getSettings } from "@/lib/settings";
+import {
+  OG_IMAGE_URL,
+  SERVICE_AREAS,
+  SITE_NAME_KO,
+  SITE_URL,
+} from "@/lib/seo";
 
 export const revalidate = 300;
+
+const AREA_LABEL = SERVICE_AREAS.join("·");
 
 export function generateStaticParams() {
   return serviceCategories.map((c) => ({ slug: c.slug }));
@@ -26,15 +34,44 @@ export async function generateMetadata({
   const { slug } = await params;
   const category = getServiceCategoryBySlug(slug);
   if (!category) return {};
-  const title = `${category.title} — ${category.subtitle} 풍선 장식`;
+  const title = `${category.seoTitle} | ${AREA_LABEL} ${SITE_NAME_KO}`;
+  const description = `${category.description} ${AREA_LABEL} 출장 ${category.regionKeyword} 전문 ${SITE_NAME_KO}.`;
+  const keywords = [
+    ...category.keywords,
+    ...SERVICE_AREAS.map((area) => `${area} ${category.regionKeyword}`),
+    SITE_NAME_KO,
+    "Blanc Belluno",
+  ];
+
+  // 해당 카테고리의 대표 포트폴리오 이미지를 OG 이미지로 사용 (없으면 기본 이미지)
+  const allItems = await getPortfolioItems();
+  const firstItem = allItems.find(
+    (item) => item.category === category.category,
+  );
+  const ogImage = firstItem?.imageUrl || OG_IMAGE_URL;
+  const ogImageAlt = firstItem
+    ? `${SITE_NAME_KO} ${category.subtitle} 풍선 장식 — ${firstItem.title || category.regionKeyword}`
+    : `${SITE_NAME_KO} — ${category.regionKeyword} 장식`;
+
   return {
-    title,
-    description: category.longDescription,
+    title: { absolute: title },
+    description,
+    keywords,
     alternates: { canonical: `/services/${category.slug}` },
     openGraph: {
+      type: "website",
+      locale: "ko_KR",
+      siteName: SITE_NAME_KO,
       title,
-      description: category.longDescription,
+      description,
       url: `/services/${category.slug}`,
+      images: [{ url: ogImage, alt: ogImageAlt }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
     },
   };
 }
@@ -55,8 +92,50 @@ export default async function ServiceCategoryPage({
 
   const items = allItems.filter((item) => item.category === category.category);
 
+  const serviceUrl = `${SITE_URL}/services/${category.slug}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "@id": `${serviceUrl}#service`,
+        name: `${category.subtitle} 풍선 장식`,
+        serviceType: category.regionKeyword,
+        description: category.longDescription,
+        url: serviceUrl,
+        provider: { "@id": `${SITE_URL}/#business` },
+        areaServed: SERVICE_AREAS.map((city) => ({
+          "@type": "City",
+          name: city,
+        })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "홈", item: `${SITE_URL}/` },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "서비스",
+            item: `${SITE_URL}/#services`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: category.subtitle,
+            item: serviceUrl,
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
       <main className="pt-24 md:pt-28">
         {/* Hero */}
@@ -108,6 +187,10 @@ export default async function ServiceCategoryPage({
                   </span>
                 ))}
               </div>
+              <p className="font-body text-[13px] text-blanc-text-muted mt-8 leading-relaxed font-light">
+                {AREA_LABEL} 전 지역 출장 {category.regionKeyword} 전문. 현장
+                답사부터 설치·철수까지 함께합니다.
+              </p>
             </div>
           </div>
         </section>

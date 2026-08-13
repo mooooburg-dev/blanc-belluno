@@ -81,6 +81,7 @@ function ServiceCard({ service }: { service: ServiceCategory }) {
         {/* View More */}
         <span className="font-body text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-blanc-text-secondary inline-flex items-center gap-1.5 group-hover:text-blanc-text-primary transition-colors">
           자세히
+          <span className="sr-only">{service.regionKeyword} 장식 보기</span>
           <span className="inline-block transform transition-transform group-hover:translate-x-1">
             →
           </span>

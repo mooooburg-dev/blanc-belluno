@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getPortfolioItems } from "@/lib/portfolio";
+import { SITE_NAME_KO, SITE_URL } from "@/lib/seo";
 
 export const revalidate = 300;
 
@@ -20,8 +21,30 @@ export const metadata: Metadata = {
 export default async function PortfolioPage() {
   const items = await getPortfolioItems();
 
+  // 포트폴리오 이미지를 갤러리 구조화 데이터로 선언 (이미지 검색·리치 결과 노출용)
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    "@id": `${SITE_URL}/portfolio#gallery`,
+    name: `${SITE_NAME_KO} 풍선 장식 포트폴리오`,
+    url: `${SITE_URL}/portfolio`,
+    creator: { "@id": `${SITE_URL}/#business` },
+    image: items.map((item) => ({
+      "@type": "ImageObject",
+      contentUrl: item.imageUrl,
+      name:
+        [item.title, item.category, "풍선 장식"].filter(Boolean).join(" — ") ||
+        item.originalName,
+      creator: { "@id": `${SITE_URL}/#business` },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900">
           풍선 장식 포트폴리오
