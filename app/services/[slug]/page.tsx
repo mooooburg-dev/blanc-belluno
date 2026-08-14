@@ -292,6 +292,7 @@ export default async function ServiceCategoryPage({
       <FloatingContact
         phone={settings.phone}
         kakaoChannel={settings.kakaoChannel}
+        instagram={settings.instagram}
       />
     </>
   );
