@@ -46,3 +46,6 @@ next-env.d.ts
 
 # 스토리지 백업 (로컬 전용)
 storage-backup/
+
+# Claude Code 개인 설정 (로컬 전용)
+.claude/settings.local.json
